@@ -50,6 +50,7 @@ function App() {
     const filteredCountries = allCountries.filter(country =>
       country.name.common.toLowerCase().includes(filter.toLowerCase())
     );
+    
     setCountries(filteredCountries);
     setSelectedCountry(filteredCountries.length === 1 ? filteredCountries[0] : null);
     console.log("filter applied: ", filter);
