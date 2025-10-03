@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import Service from './Service/CountryService';
+import CountryList from './Components/CountryList';
+import CountryDetail from './Components/CountryDetail';
 
 function Filter(props) {
   return (
@@ -10,53 +12,11 @@ function Filter(props) {
   );
 }
 
-function CountryList(props) {
-  if (props.countries === null || props.countries.length === 0) {
-    return <></>;
-  }
-
-  if (props.countries.length === 1) {
-    return <CountryDetail countries={props.countries} />;
-  }
-
-  if (props.countries.length > 10) {
-    return <div>Too many matches, specify another filter</div>;
-  }
-
-  console.log(props.countries);
-  return (
-    <div>
-      {props.countries.map(country => <div key={country.name.common}>{country.name.common}</div>)}
-    </div>
-  );
-}
-
-function CountryDetail(props) {
-  if (props.countries === null || props.countries.length !== 1) {
-    return <></>;
-  }
-
-  const country = props.countries[0];
-  console.log(country.languages);
-  return (
-    <div>
-      <h1>{country.name.common}</h1>
-      <div>Capital: {country.capital}</div>
-      <div>Area: {country.area}</div>
-      <h2>Languages</h2>
-      <ul>
-        {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
-      </ul>
-      <img src={country.flags.png} alt={`Flag of ${country.name.common}`} />
-    </div>
-  );
-};
-
-
 function App() {
   const [filter, setFilter] = useState("");
   const [countries, setCountries] = useState(null);
   const [allCountries, setAllCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     Service.getAll()
@@ -68,7 +28,7 @@ function App() {
       });
   }, []);
 
-  const onChange = (event) => {
+  const onFilterChange = (event) => {
     const filter = event.target.value;
     setFilter(filter);
 
@@ -81,14 +41,20 @@ function App() {
       country.name.common.toLowerCase().includes(filter.toLowerCase())
     );
     setCountries(filteredCountries);
+    setSelectedCountry(filteredCountries.length === 1 ? filteredCountries[0] : null);
     console.log("filter applied: ", filter);
     console.log("countries found: ", filteredCountries.length);
   }
 
+  function onShowCountry(country) {
+    setSelectedCountry(country);
+  }
+
   return (
     <>
-      <Filter filter={filter} onChange={onChange} />
-      <CountryList countries={countries} />
+      <Filter filter={filter} onChange={onFilterChange} />
+      <CountryList countries={countries} onSelect={onShowCountry}/>
+      <CountryDetail country={selectedCountry}/>
     </>
   );
 }
