@@ -2,8 +2,20 @@ const express = require("express");
 const crypto = require("crypto");
 
 const app = express();
+const morgan = require("morgan");
 
 app.use(express.json());
+
+function morganLogger(request, response, next) {
+  morgan.token("body", function (req, res) {
+    return JSON.stringify(req.body);
+  });
+  const logger = morgan(
+    ":method :url :status :res[content-length] - :response-time ms :body"
+  );
+  logger(request, response, next);
+}
+app.use(morganLogger);
 
 let persons = [
   {
