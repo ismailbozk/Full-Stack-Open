@@ -33,6 +33,11 @@ const App = () => {
   };
   useEffect(useEffectHook, []);
 
+  const useEffectHookLog = () => {
+    console.log("Persons state changed: ", newNumber);
+  };
+  useEffect(useEffectHookLog, [newNumber]);
+
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   };
@@ -69,19 +74,24 @@ const App = () => {
           name: newName,
           number: newNumber,
         };
+        console.log("will be Updated person: ", updatedPerson);
+
         phonebookService
           .update(personId, updatedPerson)
           .then((response) => {
+            console.log("Updated person: ", response);
+            console.log("All persons before update: ", allPersons);
             const newAllPersons = allPersons.map((p) =>
               p.id !== personId ? p : response
             );
+            console.log("All persons after update: ", newAllPersons);
             updatePersons(newAllPersons);
           })
           .catch((error) => {
             alert(
               showMessage({
                 message: `Information of ${updatedPerson.name} has already been removed from server.`,
-                isError: true
+                isError: true,
               })
             );
           });

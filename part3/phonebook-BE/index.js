@@ -1,12 +1,15 @@
+require("dotenv").config();
+
 const express = require("express");
 const crypto = require("crypto");
-const cors = require('cors')
+const cors = require("cors");
 const morgan = require("morgan");
+const Phonebook = require("./models/phonebook");
 
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(express.json());
-app.use(express.static('dist'));
+app.use(express.static("dist"));
 
 function morganLogger(request, response, next) {
   morgan.token("body", function (req, res) {
@@ -57,35 +60,28 @@ app.get("/info", (request, response) => {
 </html>`);
 });
 
-app.get("/api/persons", (request, response) => {
+app.get("/api/persons", async (request, response) => {
+  const persons = await Phonebook.find({});
   response.json(persons);
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", async (request, response) => {
   const id = request.params.id;
-  const person = persons.find((person) => person.id === id);
-  if (person) {
-    response.json(person);
+  const found = await Phonebook.findById(id);
+  if (found) {
+    response.json(found);
   } else {
     response.status(404).end();
   }
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", async (request, response) => {
   const id = request.params.id;
-  persons = persons.filter((person) => person.id !== id);
-
+  await Phonebook.findByIdAndDelete(id);
   response.status(204).end();
 });
 
-const generateId = () => {
-  function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
-  }
-  return getRandomInt(10000000000).toString();
-};
-
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", async (request, response) => {
   const body = request.body;
   if (!body.name || !body.number) {
     return response.status(400).json({
@@ -93,25 +89,45 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  const nameExists = persons.find((person) => person.name === body.name);
-  if (nameExists) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
-  }
-
-  const person = {
+  const person = Phonebook({
     name: body.name,
     number: body.number,
-    id: generateId(),
-  };
+  });
 
-  persons = persons.concat(person);
+  await person.save();
 
   response.json(person);
 });
 
-const PORT = process.env.PORT || 3001;
+app.put("/api/persons/:id", async (request, response) => {
+  console.log("PUT /api/persons called");
+  const id = request.params.id;
+  const body = request.body;
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: "name or number is missing",
+    });
+  }
+
+  try {
+    const updatedPerson = await Phonebook.findByIdAndUpdate(
+      id,
+      { name: body.name, number: body.number },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedPerson) {
+      return response.status(404).json({ error: "Person not found" });
+    }
+
+    response.json(updatedPerson);
+  } catch (error) {
+    console.error("Update error:", error);
+    response.status(500).json({ error: "Update failed" });
+  }
+});
+
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
