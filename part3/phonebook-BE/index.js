@@ -1,14 +1,12 @@
 const express = require("express");
 const crypto = require("crypto");
-
-const app = express();
+const cors = require('cors')
 const morgan = require("morgan");
 
-const cors = require('cors')
+const app = express();
 app.use(cors())
-
 app.use(express.json());
-app.use(express.static('dist'))
+app.use(express.static('dist'));
 
 function morganLogger(request, response, next) {
   morgan.token("body", function (req, res) {
