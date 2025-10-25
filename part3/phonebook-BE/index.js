@@ -22,29 +22,6 @@ function morganLogger(request, response, next) {
 }
 app.use(morganLogger);
 
-let persons = [
-  {
-    id: "1",
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: "2",
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: "3",
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: "4",
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 app.get("/info", (request, response) => {
   response.send(`<!doctype html>
 <html>
@@ -54,15 +31,19 @@ app.get("/info", (request, response) => {
   </head>
   <body>
     <h1>Phonebook</h1>
-    <p>Phonebook has info for ${persons.length} people</p>
+    <p>Phonebook has info for <TO be added> people</p>
     <p>${new Date()}</p>
   </body>
 </html>`);
 });
 
-app.get("/api/persons", async (request, response) => {
-  const persons = await Phonebook.find({});
-  response.json(persons);
+app.get("/api/persons", async (request, response, next) => {
+  try {
+    const persons = await Phonebook.find({});
+    response.json(persons);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.get("/api/persons/:id", (request, response, next) => {
@@ -75,18 +56,22 @@ app.get("/api/persons/:id", (request, response, next) => {
         response.status(404).end();
       }
     })
-    .catch(error => next(error))
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-  const id = request.params.id;
-  Phonebook.findByIdAndDelete(id)
-  .then((result) => {
-    response.status(204).end();
-  })
-  .catch(error => next(error));
+app.delete("/api/persons/:id", async (request, response, next) => {
+  try {
+    const id = request.params.id;
+    const result = await Phonebook.findByIdAndDelete(id);
 
-  response.status(204).end();
+    if (!result) {
+      return response.status(404).json({ error: "Person not found" });
+    }
+
+    response.status(204).end();
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.post("/api/persons", async (request, response) => {
@@ -107,7 +92,7 @@ app.post("/api/persons", async (request, response) => {
   response.json(person);
 });
 
-app.put("/api/persons/:id", async (request, response) => {
+app.put("/api/persons/:id", async (request, response, next) => {
   console.log("PUT /api/persons called");
   const id = request.params.id;
   const body = request.body;
@@ -130,27 +115,26 @@ app.put("/api/persons/:id", async (request, response) => {
 
     response.json(updatedPerson);
   } catch (error) {
-    console.error("Update error:", error);
-    response.status(500).json({ error: "Update failed" });
+    next(error);
   }
 });
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
+  response.status(404).send({ error: "unknown endpoint" });
+};
 
 // handler of requests with unknown endpoint
-app.use(unknownEndpoint)
+app.use(unknownEndpoint);
 
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
+  console.error(error.message);
 
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } 
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
 
-  next(error)
-}
+  next(error);
+};
 
 app.use(errorHandler);
 

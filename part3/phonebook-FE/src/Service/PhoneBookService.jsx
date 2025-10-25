@@ -7,7 +7,6 @@ const getAll = () => {
 }
 
 const create = newObject => {
-  console.log("PhoneBookService - creating new object: ", newObject);
   const request = axios.post(baseUrl, newObject)
   return request.then(response => response.data)
 }
