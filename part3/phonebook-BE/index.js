@@ -65,19 +65,27 @@ app.get("/api/persons", async (request, response) => {
   response.json(persons);
 });
 
-app.get("/api/persons/:id", async (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   const id = request.params.id;
-  const found = await Phonebook.findById(id);
-  if (found) {
-    response.json(found);
-  } else {
-    response.status(404).end();
-  }
+  Phonebook.findById(id)
+    .then((found) => {
+      if (found) {
+        response.json(found);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch(error => next(error))
 });
 
-app.delete("/api/persons/:id", async (request, response) => {
+app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id;
-  await Phonebook.findByIdAndDelete(id);
+  Phonebook.findByIdAndDelete(id)
+  .then((result) => {
+    response.status(204).end();
+  })
+  .catch(error => next(error));
+
   response.status(204).end();
 });
 
@@ -126,6 +134,25 @@ app.put("/api/persons/:id", async (request, response) => {
     response.status(500).json({ error: "Update failed" });
   }
 });
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+// handler of requests with unknown endpoint
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
