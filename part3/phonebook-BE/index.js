@@ -22,8 +22,12 @@ function morganLogger(request, response, next) {
 }
 app.use(morganLogger);
 
-app.get("/info", (request, response) => {
-  response.send(`<!doctype html>
+app.get("/info", async (request, response, next) => {
+  try {
+    // This line gets the total count of documents in the Phonebook collection
+    const count = await Phonebook.countDocuments({});
+
+    response.send(`<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -31,10 +35,13 @@ app.get("/info", (request, response) => {
   </head>
   <body>
     <h1>Phonebook</h1>
-    <p>Phonebook has info for <TO be added> people</p>
+    <p>Phonebook has info for ${count} people</p>
     <p>${new Date()}</p>
   </body>
 </html>`);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.get("/api/persons", async (request, response, next) => {
