@@ -26,9 +26,13 @@ const App = () => {
       .catch((error) => {
         console.error(
           "There was an error when fetching the all phonebook: ",
-          error
+          error.response.data.error
         );
-        alert("Could not fetch the phonebook.");
+        showMessage({
+          message:
+            "Could not fetch the phonebook. Reason: ${error.response.data.error}",
+          isError: true,
+        });
       });
   };
   useEffect(useEffectHook, []);
@@ -82,8 +86,9 @@ const App = () => {
           showMessage({ message: messageText, isError: false });
         })
         .catch((error) => {
+          console.log(error.response.data.error);
           showMessage({
-            message: `Information of ${updatedPerson.name} has already been removed from server.`,
+            message: `Person ${updatedPerson.name} record couldn't be updated. Reason: ${error.response.data.error}`,
             isError: true,
           });
         });
@@ -107,7 +112,11 @@ const App = () => {
         console.log("Created new person5: ");
       })
       .catch((error) => {
-        alert(`${newPerson.name} cannot be added to the phonebook.`);
+        console.log(error.response.data.error);
+        showMessage({
+          message: `${newPerson.name} cannot be added to the phonebook. Reason: ${error.response.data.error}`,
+          isError: true,
+        });
       });
   };
 
@@ -157,13 +166,11 @@ const App = () => {
           showMessage({ message: messageText, isError: false });
         })
         .catch((error) => {
-          console.error(
-            "There was an error on delete person operation ",
-            error
-          );
-          alert(
-            `The person ${person.name} couldn't be removed from the server.`
-          );
+          console.log(error.response.data.error);
+          showMessage({
+            message: `The person ${person.name} couldn't be removed from the server. Reason: ${error.response.data.error}`,
+            isError: true,
+          });
         });
     }
   };
