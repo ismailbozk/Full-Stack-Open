@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import service from './services/service'
-import type { NewDiaryEntry, NonSensitiveDiaryEntry } from './entities/diary';
-import { isWeather, isVisibility } from './entities/diary';
+import { isVisibility, isWeather, type NewDiaryEntry, type NonSensitiveDiaryEntry } from './entities/diary';
 import { Content } from './components/Content';
 import { SubmitForm } from './components/SubmitForm';
 import axios from 'axios';
@@ -14,6 +13,14 @@ function App() {
   const [newComment, setNewComment] = useState<string>('');
   const [message, setMessage] = useState<string | null>(null);
 
+  const showMessage = (msg: string | null) => {
+    if (msg === null) return;
+    setMessage(msg);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+  };
+
   useEffect(() => {
     service.getAll()
       .then(data => {
@@ -24,29 +31,20 @@ function App() {
         showMessage(`Failed to fetch diary entries ${error.message}`);
         console.error('Error fetching data:', error)
       })
-  }, [])
+  }, []);
 
-  const showMessage = (msg: string | null) => {
-    if (msg === null) return;
-    setMessage(msg);
-    setTimeout(() => {
-      setMessage(null);
-    }, 5000);
-  };
+  useEffect(() => {
+    console.log('newDate changed:', newDate)  ;
+  }, [newDate]);
 
   const handleSubmit = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
     showMessage(null);
 
-    if (!isWeather(newWeather)) {
-      showMessage(`Invalid weather value: ${newWeather}`);
+    if (newDate.length === 0 || newWeather.length === 0 || newVisibility.length === 0 || !isWeather(newWeather) || !isVisibility(newVisibility) || newComment.length === 0) {
+      showMessage('All fields are required');
       return;
-    }
-
-    if (!isVisibility(newVisibility)) {
-      showMessage(`Invalid visibility value: ${newVisibility}`);
-      return;
-    }
+    }    
 
     const newDiaryEntry: NewDiaryEntry = {
       date: newDate,
@@ -81,7 +79,7 @@ function App() {
 
   return (
     <>
-      {message && <div style={{ color: 'red' }}>{message}</div>}
+      {message && <div key="message" style={{ color: 'red' }}>{message}</div>}
       <SubmitForm
         newDate={newDate}
         newWeather={newWeather}

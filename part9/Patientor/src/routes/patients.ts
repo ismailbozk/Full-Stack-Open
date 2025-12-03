@@ -5,7 +5,7 @@ import {
   NonSensitivePatient,
   Patient,
 } from '../types/Patient';
-import { getNonSensitivePatients, addPatient } from '../services/service';
+import { getNonSensitivePatients, addPatient, getPatients } from '../services/service';
 import { z } from 'zod';
 import { newPatientParser } from '../middlewares/patientParser';
 
@@ -13,6 +13,17 @@ const router = express.Router();
 
 router.get('/', (_req, res: Response<NonSensitivePatient[]>) => {
   res.send(getNonSensitivePatients());
+});
+
+router.get('/:id', (req, res: Response<Patient | { error: string }>) => {
+  const patient = getPatients().find(
+    (p) => p.id === req.params.id
+  );
+  if (patient) {
+    res.send(patient);
+  } else {
+    res.status(404).send({ error: 'Patient not found' });
+  }
 });
 
 const errorMiddleware = (error: unknown, _req: Request, res: Response, next: NextFunction) => { 

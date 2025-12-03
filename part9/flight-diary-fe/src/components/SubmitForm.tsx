@@ -1,3 +1,4 @@
+import React from 'react';
 import { visibilityValues, weatherValues } from "../entities/diary";
 
 
@@ -14,35 +15,58 @@ export interface SubmitFormProps {
 }
 
 export function SubmitForm(props: SubmitFormProps) {
+    const today = new Date().toISOString().split('T')[0];
+
     return (
         <form>
             <h1>Add New Diary Entry</h1>
-            <div>
-                <label htmlFor="date">Date: </label>
-                <input
-                    id="date"
-                    value={props.newDate}
-                    placeholder="YYYY-MM-DD"
-                    onChange={event => props.handleDateChange(event.target.value)}
-                />
-            </div>
-            <div>
+            <label htmlFor="date">Date: </label>
+            <input
+                type="date"
+                id="start"
+                name="trip-start"
+                value={props.newDate}
+                min="1950-01-01"
+                max={today}
+                onChange={event => props.handleDateChange(event.target.value)}
+            />
+            <div key="visibility">
                 <label htmlFor="visibility">Visibility: </label>
-                <input
-                    id="visibility"
-                    value={props.newVisibility}
-                    placeholder={visibilityValues.join(', ')}
-                    onChange={event => props.handleVisibilityChange(event.target.value)}
-                />
+                {
+                    visibilityValues.map(value => {
+                        return (
+                            <React.Fragment key={value}>
+                                <input
+                                    type="radio"
+                                    id={value.toString()}
+                                    name="visibility"
+                                    value={value.toString()}
+                                    checked={props.newVisibility === value.toString()}
+                                    onChange={event => props.handleVisibilityChange(event.target.value)}
+                                />
+                                <label htmlFor={value.toString()}>{value.toString()}</label>
+                            </React.Fragment>
+                        );
+                    })
+                }
             </div>
-            <div>
+            <div key="weather">
                 <label htmlFor="weather">Weather: </label>
-                <input
-                    id="weather"
-                    value={props.newWeather}
-                    placeholder={weatherValues.join(', ')}
-                    onChange={event => props.handleWeatherChange(event.target.value)}
-                />
+                {weatherValues.map(value => {
+                    return (
+                        <React.Fragment key={value}>
+                            <input
+                                type="radio"
+                                id={value.toString()}
+                                name="weather"
+                                value={value.toString()}
+                                checked={props.newWeather === value.toString()}
+                                onChange={event => props.handleWeatherChange(event.target.value)}
+                            />
+                            <label htmlFor={value.toString()}>{value.toString()}</label>
+                        </React.Fragment>
+                    );
+                })}
             </div>
             <div>
                 <label htmlFor="comment">Comment: </label>
