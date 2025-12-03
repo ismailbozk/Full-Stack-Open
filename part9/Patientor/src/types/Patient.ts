@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Diagnosis } from "./Diagnosis";
 
 export enum Gender {
   Male = "male",
@@ -6,17 +7,59 @@ export enum Gender {
   Other = "other"
 }
 
-export const entrySchema = z.object({
-  id: z.string().optional(),
-  date: z.string().refine(
-    (val) => /^\d{4}-\d{2}-\d{2}$/.test(val) && !isNaN(Date.parse(val)),
-    { message: 'Invalid date format, expected YYYY-MM-DD' }
-  ),
-  description: z.string(),
-  specialist: z.string(),
-});
+export enum HealthCheckRating {
+  "Healthy" = 0,
+  "LowRisk" = 1,
+  "HighRisk" = 2,
+  "CriticalRisk" = 3
+}
 
-export type Entry = z.infer<typeof entrySchema>;
+interface BaseEntry {
+  id: string;
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes?: Array<Diagnosis['code']>;
+}
+
+interface HealthCheckEntry extends BaseEntry {
+  type: "HealthCheck";
+  healthCheckRating: HealthCheckRating;
+}
+
+interface OccupationalHealthcareEntry extends BaseEntry {
+  type: "OccupationalHealthcare";
+  employerName: string;
+  sickLeave?: {
+    startDate: string;
+    endDate: string;
+  };
+}
+
+interface HospitalEntry extends BaseEntry {
+  type: "Hospital";
+  discharge: {
+    date: string;
+    criteria: string;
+  };
+}
+
+export type Entry =
+  | HospitalEntry
+  | OccupationalHealthcareEntry
+  | HealthCheckEntry;
+
+// export const entrySchema = z.object({
+//   id: z.string().optional(),
+//   date: z.string().refine(
+//     (val) => /^\d{4}-\d{2}-\d{2}$/.test(val) && !isNaN(Date.parse(val)),
+//     { message: 'Invalid date format, expected YYYY-MM-DD' }
+//   ),
+//   description: z.string(),
+//   specialist: z.string(),
+// });
+
+// export type Entry = z.infer<typeof entrySchema>;
 
 export const newPatientEntrySchema = z.object({
   name: z.string(),
@@ -24,10 +67,10 @@ export const newPatientEntrySchema = z.object({
     (val) => /^\d{4}-\d{2}-\d{2}$/.test(val) && !isNaN(Date.parse(val)),
     { message: 'Invalid date format, expected YYYY-MM-DD' }
   ),
-  ssn: z.string().optional(),   
+  ssn: z.string().optional(),
   gender: z.nativeEnum(Gender),
   occupation: z.string(),
-  entries: z.array(entrySchema).default([]),
+  entries: z.custom<Entry[]>((val) => Array.isArray(val)).default([]),
 });
 
 export type NewPatientEntry = z.infer<typeof newPatientEntrySchema>;
