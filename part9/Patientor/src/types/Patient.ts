@@ -49,18 +49,6 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
 
-// export const entrySchema = z.object({
-//   id: z.string().optional(),
-//   date: z.string().refine(
-//     (val) => /^\d{4}-\d{2}-\d{2}$/.test(val) && !isNaN(Date.parse(val)),
-//     { message: 'Invalid date format, expected YYYY-MM-DD' }
-//   ),
-//   description: z.string(),
-//   specialist: z.string(),
-// });
-
-// export type Entry = z.infer<typeof entrySchema>;
-
 export const newPatientEntrySchema = z.object({
   name: z.string(),
   dateOfBirth: z.string().refine(

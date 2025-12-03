@@ -36,10 +36,19 @@ function PatientDetailPage(props: PatientDetailPageProps) {
             ) : (
                 <>
                     {patientDetail.entries.map((entry) => (
-                        <div key={entry.id} style={{ marginBottom: "1em", padding: "1em", border: "1px solid #ccc", borderRadius: "5px" }}>
-                            <Typography variant="h6">{entry.date} - {entry.type}</Typography>
+                        <div key={entry.id}>
+                            <Typography variant="h6">{entry.date}</Typography>
                             <Typography variant="body2">{entry.description}</Typography>
-                            <Typography variant="caption">Specialist: {entry.specialist}</Typography>
+                            <Typography variant="caption">Diagnosis:</Typography>
+                            {(entry.diagnosisCodes ?? []).length > 0 ? (
+                                <ul>
+                                    {(entry.diagnosisCodes ?? []).map(code => (
+                                        <li key={code}>{code}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <Typography variant="caption">None</Typography>
+                            )}
                         </div>
                     ))}
                 </>
