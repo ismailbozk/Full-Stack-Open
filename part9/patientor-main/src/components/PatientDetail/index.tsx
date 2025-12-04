@@ -1,7 +1,9 @@
-import { Typography } from '@mui/material';
-import { Diagnosis, Entry, PatientDetail, HealthCheckEntry, OccupationalHealthcareEntry, HospitalEntry } from '../../types';
+import { Typography, Button } from '@mui/material';
+import { Diagnosis, Entry, PatientDetail } from '../../types';
 import service from '../../services/patients';
 import { useEffect, useState } from 'react';
+import { PatientHospitalEntry, PatientHealthCheckEntry, PatientOccupationalHealthcareEntry } from './DiagnosisEntries';
+import PatientEntryForm from '../PatientEntryForm';
 
 export interface PatientDetailPageProps {
     patientId: string;
@@ -11,6 +13,9 @@ function PatientDetailPage(props: PatientDetailPageProps) {
 
     const [patientDetail, setPatientDetail] = useState<PatientDetail | null>(null);
     const [diagnosisDefinitions, setDiagnosisDefinitions] = useState<Diagnosis[]>([]);
+    const [message, setMessage] = useState<string | null>(null);
+    const [showAddEntryForm, setShowAddEntryForm] = useState<boolean>(false);
+
     useEffect(() => {
         const fetchPatientDetail = async () => {
             try {
@@ -38,97 +43,22 @@ function PatientDetailPage(props: PatientDetailPageProps) {
     }, []);
 
     /**
- * Helper function for exhaustive type checking
- */
+     * Helper function for exhaustive type checking
+     */
     const assertNever = (value: never): never => {
         throw new Error(
             `Unhandled discriminated union member: ${JSON.stringify(value)}`
         );
     };
 
-    function DiagnosisEntries(props: { entry: Entry }): JSX.Element {
-        const { entry } = props;
-        if ((entry.diagnosisCodes ?? [])?.length === 0) {
-            return <></>;
-        }
-
-        if (diagnosisDefinitions.length > 0) {
-            return (
-                <ul>
-                    {entry.diagnosisCodes?.map(code => {
-                        const diagnosis = diagnosisDefinitions.find(d => d.code === code);
-                        return (
-                            <li key={code}>
-                                {code} {diagnosis ? diagnosis.name : ''}
-                            </li>
-                        );
-                    })}
-                </ul>
-            );
-        }
-
-        return (
-            <>
-                {(entry.diagnosisCodes ?? []).length > 0 ? (
-                    <ul>
-                        {(entry.diagnosisCodes ?? []).map(code => (
-                            <li key={code}>{code}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <Typography variant="caption">None</Typography>
-                )}
-            </>
-        );
-    }
-
-    function PatientHealthCheckEntry(props: { entry: HealthCheckEntry }): JSX.Element {
-        const { entry } = props;
-        return (
-            <div>
-                <Typography variant="body1">Health Check Entry on {entry.date}</Typography>
-                <Typography variant="body2">{entry.description}</Typography>
-                <DiagnosisEntries entry={entry} />
-                <Typography variant="caption">Health Rating: {entry.healthCheckRating}</Typography>
-            </div>
-        );
-    }
-
-    function PatientOccupationalHealthcareEntry(props: { entry: OccupationalHealthcareEntry }): JSX.Element {
-        const { entry } = props;
-        return (
-            <div>
-                <Typography variant="body1">Occupational Healthcare Entry on {entry.date}</Typography>
-                <Typography variant="body2">{entry.description}</Typography>
-                <DiagnosisEntries entry={entry} />
-                <Typography variant="caption">Employer: {entry.employerName}</Typography>
-                <Typography variant="body2">Sick Leave: {entry.sickLeave ? `${entry.sickLeave.startDate} to ${entry.sickLeave.endDate}` : 'N/A'}</Typography>
-
-            </div>
-        );
-    }
-
-    function PatientHospitalEntry(props: { entry: HospitalEntry }): JSX.Element {
-        const { entry } = props;
-        return (
-            <div>
-                <Typography variant="body1">Hospital Entry on {entry.date}</Typography>
-                <Typography variant="body2">{entry.description}</Typography>
-                <DiagnosisEntries entry={entry} />
-                <Typography variant="caption">Discharge Date: {entry.discharge.date}</Typography>
-                <Typography variant="body2">Discharge Criteria: {entry.discharge.criteria}</Typography>
-            </div>
-        );
-    }
-
     function renderEntryComponent(entry: Entry): JSX.Element {
         switch (entry.type) {
             case "HealthCheck":
-                return <PatientHealthCheckEntry entry={entry} />;
+                return <PatientHealthCheckEntry entry={entry} diagnosisDefinitions={diagnosisDefinitions} />;
             case "OccupationalHealthcare":
-                return <PatientOccupationalHealthcareEntry entry={entry} />;
+                return <PatientOccupationalHealthcareEntry entry={entry} diagnosisDefinitions={diagnosisDefinitions} />;
             case "Hospital":
-                return <PatientHospitalEntry entry={entry} />;
+                return <PatientHospitalEntry entry={entry} diagnosisDefinitions={diagnosisDefinitions} />;
             default:
                 return assertNever(entry);
         }
@@ -154,6 +84,34 @@ function PatientDetailPage(props: PatientDetailPageProps) {
         );
     }
 
+    const showMessage = (message: string | null) => {
+        if (!message) {
+            return;
+        }
+
+        setTimeout(() => {
+            setMessage(message);
+        }, 5000);
+    };
+
+    const handleAddEntry = async (entry: Entry) => {
+        console.log("Entry submitted:", entry);
+
+        try {
+            const newEntry = await service.addEntry(props.patientId, entry);
+            if (patientDetail) {
+                setPatientDetail({
+                    ...patientDetail,
+                    entries: [...patientDetail.entries, newEntry]
+                });
+            }
+        } catch (error) {
+            showMessage("Failed to add entry");
+            console.error("Failed to add entry", error);
+            return;
+        }
+    };
+
     if (!patientDetail) {
         return <Typography>Loading patient details...</Typography>;
     }
@@ -175,7 +133,21 @@ function PatientDetailPage(props: PatientDetailPageProps) {
             <Typography variant="h5" style={{ marginTop: "1em", marginBottom: "0.5em" }}>
                 Entries
             </Typography>
+            {
+                showAddEntryForm
+                    ?
+                    <PatientEntryForm
+                        onSubmit={handleAddEntry}
+                        onCancel={() => setShowAddEntryForm(false)}
+                        errorMessage={message}
+                    />
+                    :
+                    <Button variant="contained" onClick={() => setShowAddEntryForm(true)}>
+                        Add New Entry
+                    </Button>
+            }
             <PatientDetailEntries />
+            
         </>
     );
 }
