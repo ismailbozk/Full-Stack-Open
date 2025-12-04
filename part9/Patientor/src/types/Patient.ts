@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { Diagnosis } from "./Diagnosis";
 
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
+
 export enum Gender {
   Male = "male",
   Female = "female",
@@ -68,4 +70,4 @@ export interface Patient extends NewPatientEntry {
 }
 
 export type NonSensitivePatient = Omit<Patient, 'ssn' | 'entries'>;
-
+export type EntryWithoutId = UnionOmit<Entry, 'id'>;

@@ -1,11 +1,12 @@
 import express from 'express';
 import { Response, NextFunction, Request } from 'express';
 import {
+  EntryWithoutId,
   NewPatientEntry,
   NonSensitivePatient,
   Patient,
 } from '../types/Patient';
-import { getNonSensitivePatients, addPatient, getPatients } from '../services/service';
+import { getNonSensitivePatients, addPatient, getPatients, addEntryToPatient } from '../services/service';
 import { z } from 'zod';
 import { newPatientParser } from '../middlewares/patientParser';
 
@@ -43,19 +44,15 @@ router.post(
   }
 );
 
-// router.post('/', (req, res: Response<Patient | { error: unknown }>) => {
-//   try {
-//     const newDiaryEntry = newPatientEntrySchema.parse(req.body);
-//     const addedEntry = addPatient(newDiaryEntry);
-//     res.json(addedEntry);
-//   } catch (error: unknown) {
-//     if (error instanceof z.ZodError) {
-//       res.status(400).send({ error: error.issues });
-//     } else {
-//       res.status(400).send({ error: 'unknown error' });
-//     }
-//   }
-// });
+router.post('/:id/entries', (req: Request, res: Response<EntryWithoutId | { error: string }>) => { 
+  const patient = getPatients().find((p) => p.id === req.params.id);
+  if (!patient) {
+    return res.status(404).send({ error: 'Patient not found' });
+  }
+  const entry = req.body as EntryWithoutId;
+  addEntryToPatient(req.params.id, entry);
+  return res.json(entry);
+});
 
 router.use(errorMiddleware);
 
