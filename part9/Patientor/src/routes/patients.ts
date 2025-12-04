@@ -50,8 +50,8 @@ router.post('/:id/entries', (req: Request, res: Response<EntryWithoutId | { erro
     return res.status(404).send({ error: 'Patient not found' });
   }
   const entry = req.body as EntryWithoutId;
-  addEntryToPatient(req.params.id, entry);
-  return res.json(entry);
+  const newEntry = addEntryToPatient(req.params.id, entry);
+  return res.json(newEntry);
 });
 
 router.use(errorMiddleware);
