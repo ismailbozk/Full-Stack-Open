@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { Diagnosis, Entry, PatientDetail } from '../../types';
+import { Diagnosis, Entry, PatientDetail, HealthCheckEntry, OccupationalHealthcareEntry, HospitalEntry } from '../../types';
 import service from '../../services/patients';
 import { useEffect, useState } from 'react';
 
@@ -11,8 +11,6 @@ function PatientDetailPage(props: PatientDetailPageProps) {
 
     const [patientDetail, setPatientDetail] = useState<PatientDetail | null>(null);
     const [diagnosisDefinitions, setDiagnosisDefinitions] = useState<Diagnosis[]>([]);
-
-
     useEffect(() => {
         const fetchPatientDetail = async () => {
             try {
@@ -38,6 +36,15 @@ function PatientDetailPage(props: PatientDetailPageProps) {
         };
         void fetchDiagnosisCodes();
     }, []);
+
+    /**
+ * Helper function for exhaustive type checking
+ */
+    const assertNever = (value: never): never => {
+        throw new Error(
+            `Unhandled discriminated union member: ${JSON.stringify(value)}`
+        );
+    };
 
     function DiagnosisEntries(props: { entry: Entry }): JSX.Element {
         const { entry } = props;
@@ -75,6 +82,58 @@ function PatientDetailPage(props: PatientDetailPageProps) {
         );
     }
 
+    function PatientHealthCheckEntry(props: { entry: HealthCheckEntry }): JSX.Element {
+        const { entry } = props;
+        return (
+            <div>
+                <Typography variant="body1">Health Check Entry on {entry.date}</Typography>
+                <Typography variant="body2">{entry.description}</Typography>
+                <DiagnosisEntries entry={entry} />
+                <Typography variant="caption">Health Rating: {entry.healthCheckRating}</Typography>
+            </div>
+        );
+    }
+
+    function PatientOccupationalHealthcareEntry(props: { entry: OccupationalHealthcareEntry }): JSX.Element {
+        const { entry } = props;
+        return (
+            <div>
+                <Typography variant="body1">Occupational Healthcare Entry on {entry.date}</Typography>
+                <Typography variant="body2">{entry.description}</Typography>
+                <DiagnosisEntries entry={entry} />
+                <Typography variant="caption">Employer: {entry.employerName}</Typography>
+                <Typography variant="body2">Sick Leave: {entry.sickLeave ? `${entry.sickLeave.startDate} to ${entry.sickLeave.endDate}` : 'N/A'}</Typography>
+
+            </div>
+        );
+    }
+
+    function PatientHospitalEntry(props: { entry: HospitalEntry }): JSX.Element {
+        const { entry } = props;
+        return (
+            <div>
+                <Typography variant="body1">Hospital Entry on {entry.date}</Typography>
+                <Typography variant="body2">{entry.description}</Typography>
+                <DiagnosisEntries entry={entry} />
+                <Typography variant="caption">Discharge Date: {entry.discharge.date}</Typography>
+                <Typography variant="body2">Discharge Criteria: {entry.discharge.criteria}</Typography>
+            </div>
+        );
+    }
+
+    function renderEntryComponent(entry: Entry): JSX.Element {
+        switch (entry.type) {
+            case "HealthCheck":
+                return <PatientHealthCheckEntry entry={entry} />;
+            case "OccupationalHealthcare":
+                return <PatientOccupationalHealthcareEntry entry={entry} />;
+            case "Hospital":
+                return <PatientHospitalEntry entry={entry} />;
+            default:
+                return assertNever(entry);
+        }
+    }
+
     function PatientDetailEntries(): JSX.Element {
         if (!patientDetail) {
             return <></>;
@@ -85,9 +144,9 @@ function PatientDetailPage(props: PatientDetailPageProps) {
                 <Typography variant="body1">No entries available.</Typography>
             ) : (
                 <>
-                    {patientDetail.entries.map((entry) => (
-                        <div key={entry.id}>
-                            <DiagnosisEntries entry={entry} />
+                    {patientDetail.entries.map(entry => (
+                        <div key={entry.id} style={{ border: '1px solid #ccc', padding: '1em', marginBottom: '1em', borderRadius: '5px' }}>
+                            {renderEntryComponent(entry)}
                         </div>
                     ))}
                 </>
