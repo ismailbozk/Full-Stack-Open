@@ -140,6 +140,7 @@ function PatientDetailPage(props: PatientDetailPageProps) {
                         onSubmit={handleAddEntry}
                         onCancel={() => setShowAddEntryForm(false)}
                         errorMessage={message}
+                        diagnosisDefinitions={diagnosisDefinitions}
                     />
                     :
                     <Button variant="contained" onClick={() => setShowAddEntryForm(true)}>

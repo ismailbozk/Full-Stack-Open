@@ -5,6 +5,7 @@ import {
     Box,
 } from '@mui/material';
 import { Diagnosis } from '../../types';
+import DiagnosisPicker from './components/DiagnosisPicker';
 
 interface FormErrors {
     [key: string]: string;
@@ -16,7 +17,7 @@ interface BaseEntryFormProps {
     specialist: string;
     diagnosisCodes: string;
     errors: FormErrors;
-    allDiagnosisEntries?: Diagnosis[];
+    allDiagnosisEntries: Diagnosis[];
     onDescriptionChange: (value: string) => void;
     onDateChange: (value: string) => void;
     onSpecialistChange: (value: string) => void;
@@ -30,6 +31,7 @@ export const BaseEntryForm = ({
     specialist,
     diagnosisCodes,
     errors,
+    allDiagnosisEntries,
     onDescriptionChange,
     onDateChange,
     onSpecialistChange,
@@ -81,6 +83,11 @@ export const BaseEntryForm = ({
                         multiline
                         rows={2}
                         placeholder="Enter codes separated by commas. E.g., J10.1, M79.3"
+                    />
+                    <DiagnosisPicker 
+                        diagnosisDefinitions={allDiagnosisEntries || []}
+                        selectedDiagnosisCodes={diagnosisCodes ? diagnosisCodes.split(',').map(code => code.trim()).filter(code => code) : []}
+                        onChange={(selectedCodes) => onDiagnosisCodesChange(selectedCodes.join(', '))}
                     />
                     {children}
                 </Box>

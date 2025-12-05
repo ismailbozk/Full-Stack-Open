@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Box, FormControl, InputLabel, Select, MenuItem, FormHelperText, Typography } from '@mui/material';
-import { Entry } from '../../types';
+import { Diagnosis, Entry } from '../../types';
 import { HealthCheckEntryForm } from './HealthCheckEntryForm';
 import { OccupationalHealthcareEntryForm } from './OccupationalHealthcareEntryForm';
 import { HospitalEntryForm } from './HospitalEntryForm';
@@ -9,11 +9,12 @@ interface PatientEntryFormProps {
     onSubmit: (entry: Entry) => void;
     onCancel?: () => void;
     errorMessage: string | null;
+    diagnosisDefinitions: Array<Diagnosis>;
 }
 
 type EntryType = 'HealthCheck' | 'OccupationalHealthcare' | 'Hospital';
 
-function PatientEntryForm({ onSubmit, onCancel, errorMessage }: PatientEntryFormProps): JSX.Element {
+function PatientEntryForm({ onSubmit, onCancel, errorMessage, diagnosisDefinitions }: PatientEntryFormProps): JSX.Element {
     const [entryType, setEntryType] = useState<EntryType>('HealthCheck');
 
     return (
@@ -38,13 +39,13 @@ function PatientEntryForm({ onSubmit, onCancel, errorMessage }: PatientEntryForm
 
             {/* Render appropriate form based on type */}
             {entryType === 'HealthCheck' && (
-                <HealthCheckEntryForm onSubmit={onSubmit} onCancel={onCancel} />
+                <HealthCheckEntryForm onSubmit={onSubmit} onCancel={onCancel} allDiagnosisEntries={diagnosisDefinitions} />
             )}
             {entryType === 'OccupationalHealthcare' && (
-                <OccupationalHealthcareEntryForm onSubmit={onSubmit} onCancel={onCancel} />
+                <OccupationalHealthcareEntryForm onSubmit={onSubmit} onCancel={onCancel} allDiagnosisEntries={diagnosisDefinitions} />
             )}
             {entryType === 'Hospital' && (
-                <HospitalEntryForm onSubmit={onSubmit} onCancel={onCancel} />
+                <HospitalEntryForm onSubmit={onSubmit} onCancel={onCancel} allDiagnosisEntries={diagnosisDefinitions} />
             )}
         </Box>
     );

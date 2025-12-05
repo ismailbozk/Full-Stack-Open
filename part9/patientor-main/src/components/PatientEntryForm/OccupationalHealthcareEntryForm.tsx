@@ -5,19 +5,20 @@ import {
     Stack,
     Box,
 } from '@mui/material';
-import { OccupationalHealthcareEntry } from '../../types';
+import { Diagnosis, OccupationalHealthcareEntry } from '../../types';
 import { BaseEntryForm } from './BaseEntryForm';
 
 interface OccupationalHealthcareEntryFormProps {
     onSubmit: (entry: OccupationalHealthcareEntry) => void;
     onCancel?: () => void;
+    allDiagnosisEntries: Diagnosis[];
 }
 
 interface FormErrors {
     [key: string]: string;
 }
 
-export const OccupationalHealthcareEntryForm = ({ onSubmit, onCancel }: OccupationalHealthcareEntryFormProps) => {
+export const OccupationalHealthcareEntryForm = ({ onSubmit, onCancel, allDiagnosisEntries }: OccupationalHealthcareEntryFormProps) => {
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [specialist, setSpecialist] = useState('');
@@ -79,6 +80,7 @@ export const OccupationalHealthcareEntryForm = ({ onSubmit, onCancel }: Occupati
                 date={date}
                 specialist={specialist}
                 diagnosisCodes={diagnosisCodes}
+                allDiagnosisEntries={allDiagnosisEntries}
                 errors={errors}
                 onDescriptionChange={setDescription}
                 onDateChange={setDate}

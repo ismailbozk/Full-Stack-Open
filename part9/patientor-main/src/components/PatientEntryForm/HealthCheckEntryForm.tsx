@@ -8,19 +8,20 @@ import {
   Stack,
   Box,
 } from '@mui/material';
-import { HealthCheckRating, HealthCheckEntry } from '../../types';
+import { HealthCheckRating, HealthCheckEntry, Diagnosis } from '../../types';
 import { BaseEntryForm } from './BaseEntryForm';
 
 interface HealthCheckEntryFormProps {
   onSubmit: (entry: HealthCheckEntry) => void;
   onCancel?: () => void;
+  allDiagnosisEntries: Diagnosis[];
 }
 
 interface FormErrors {
   [key: string]: string;
 }
 
-export const HealthCheckEntryForm = ({ onSubmit, onCancel }: HealthCheckEntryFormProps) => {
+export const HealthCheckEntryForm = ({ onSubmit, onCancel, allDiagnosisEntries }: HealthCheckEntryFormProps) => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [specialist, setSpecialist] = useState('');
@@ -75,6 +76,7 @@ export const HealthCheckEntryForm = ({ onSubmit, onCancel }: HealthCheckEntryFor
         specialist={specialist}
         diagnosisCodes={diagnosisCodes}
         errors={errors}
+        allDiagnosisEntries={allDiagnosisEntries}
         onDescriptionChange={setDescription}
         onDateChange={setDate}
         onSpecialistChange={setSpecialist}

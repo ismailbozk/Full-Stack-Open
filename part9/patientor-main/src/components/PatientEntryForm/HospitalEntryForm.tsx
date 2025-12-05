@@ -5,19 +5,20 @@ import {
   Stack,
   Box,
 } from '@mui/material';
-import { HospitalEntry } from '../../types';
+import { Diagnosis, HospitalEntry } from '../../types';
 import { BaseEntryForm } from './BaseEntryForm';
 
 interface HospitalEntryFormProps {
   onSubmit: (entry: HospitalEntry) => void;
   onCancel?: () => void;
+  allDiagnosisEntries: Diagnosis[];
 }
 
 interface FormErrors {
   [key: string]: string;
 }
 
-export const HospitalEntryForm = ({ onSubmit, onCancel }: HospitalEntryFormProps) => {
+export const HospitalEntryForm = ({ onSubmit, onCancel, allDiagnosisEntries }: HospitalEntryFormProps) => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [specialist, setSpecialist] = useState('');
@@ -79,6 +80,7 @@ export const HospitalEntryForm = ({ onSubmit, onCancel }: HospitalEntryFormProps
         specialist={specialist}
         diagnosisCodes={diagnosisCodes}
         errors={errors}
+        allDiagnosisEntries={allDiagnosisEntries}
         onDescriptionChange={setDescription}
         onDateChange={setDate}
         onSpecialistChange={setSpecialist}
