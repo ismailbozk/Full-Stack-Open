@@ -6,7 +6,6 @@ const styles = StyleSheet.create({
         flexGrow: 0,
         flexDirection: 'row',
         alignItems: 'flex-start',
-        // backgroundColor: '#d7e0e7ff',
         alignSelf: 'center',
         padding: 10,
     },

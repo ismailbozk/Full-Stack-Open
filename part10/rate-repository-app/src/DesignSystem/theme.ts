@@ -4,7 +4,7 @@ const theme = {
     textSecondary: '#586069',
     primary: '#0366d6',
     appBarBackground: '#24292e',
-    backgroundPrimary: '#f6f8ff',
+    backgroundPrimary: 'white',
     separatorColor: '#e1e4e8',
     tagBackground: '#0366d6',
   },
