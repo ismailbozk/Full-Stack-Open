@@ -4,6 +4,9 @@ const theme = {
     textSecondary: '#586069',
     primary: '#0366d6',
     appBarBackground: '#24292e',
+    backgroundPrimary: '#f6f8ff',
+    separatorColor: '#e1e4e8',
+    tagBackground: '#0366d6',
   },
   fontSizes: {
     body: 14,
@@ -16,6 +19,11 @@ const theme = {
   fontWeights: {
     normal: '400',
     bold: '700',
+  },
+  spacing: {
+    small: 5,
+    medium: 10,
+    large: 15,
   },
 };
 

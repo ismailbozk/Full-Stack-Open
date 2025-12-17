@@ -1,6 +1,5 @@
 import React from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import theme from '../../DesignSystem/theme';
 
 const styles = StyleSheet.create({
     flexItem: {
