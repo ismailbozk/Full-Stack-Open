@@ -7,6 +7,7 @@ const theme = {
     backgroundPrimary: 'white',
     separatorColor: '#e1e4e8',
     tagBackground: '#0366d6',
+    formBorder: '#909396ff',
   },
   fontSizes: {
     body: 14,
@@ -17,14 +18,18 @@ const theme = {
     main: 'System',
   },
   fontWeights: {
-    normal: '400',
-    bold: '700',
+    normal: '400' as const,
+    bold: '700' as const,
   },
   spacing: {
     small: 5,
     medium: 10,
     large: 15,
   },
+  form: {
+    borderRadius: 3,
+
+  }
 };
 
 export default theme;

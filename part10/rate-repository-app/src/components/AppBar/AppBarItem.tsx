@@ -14,9 +14,7 @@ const styles = StyleSheet.create({
 
 function AppBarItem({ children }: { children: React.ReactNode }): React.JSX.Element {
     return (
-        <Pressable style={styles.flexItem}
-            // eslint-disable-next-line no-console
-            onPress={() => console.log("pressed the tab item")}>
+        <Pressable style={styles.flexItem}>
             {children}
         </Pressable>
     );
