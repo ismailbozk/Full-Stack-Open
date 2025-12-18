@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, View, StyleSheet } from "react-native";
-import { Repository } from "../types/Repository";
+import "whatwg-fetch";
+import useRepositories from "./hooks/useRepositories";
 import RepositoryItem from "./RepositoryItem";
 import theme from "../DesignSystem/theme";
 
-interface RepositoryListProps {
-    repositories: Repository[];
-}
-
-function RepositoryList({ repositories }: RepositoryListProps): React.ReactElement {
+function RepositoryList(): React.ReactElement {
+    const { repositories } = useRepositories();
+    
     const ItemSeparator = () => <View style={styles.separator} />;
 
     const styles = StyleSheet.create({
