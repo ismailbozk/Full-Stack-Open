@@ -8,6 +8,7 @@ const theme = {
     separatorColor: '#e1e4e8',
     tagBackground: '#0366d6',
     formBorder: '#909396ff',
+    error: '#d73a4a',
   },
   fontSizes: {
     body: 14,
