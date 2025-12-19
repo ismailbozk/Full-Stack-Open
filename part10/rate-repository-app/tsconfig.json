@@ -13,6 +13,11 @@
     "resolveJsonModule": true,
     "jsx": "react-native"
   },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.d.ts"
+  ],
   "exclude": [
     "node_modules",
     "eslint.config.mjs"

@@ -10,15 +10,18 @@ export interface UseRepositoriesResult {
 
 const useRepositories = (): UseRepositoriesResult => {
 
-    const { data, loading, refetch } = useQuery<RepositoryListResponse>(GET_REPOSITORIES, {
-        fetchPolicy: 'cache-and-network',
-        onError: (error) => {
-            globalThis.console.error("Fetch repositories failed: ", error.message);
-        },
-        onCompleted: () => {
-            globalThis.console.log("Fetch repositories succeeded");
+    const { data, loading, refetch } = useQuery<RepositoryListResponse>(GET_REPOSITORIES,
+        {
+            fetchPolicy: 'cache-and-network',
+            onError: (error) => {
+                globalThis.console.error("Fetch repositories failed: ", error.message);
+            },
+            onCompleted: () => {
+                globalThis.console.log("Fetch repositories succeeded");
+            }
+
         }
-    });
+    );
     const repositories: Repository[] = data?.repositories?.edges?.map(edge => edge.node) || [];
     return {
         repositories,
