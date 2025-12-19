@@ -66,7 +66,7 @@ const SignIn = () => {
     };
 
     const onSubmit = (values: SignInProps) => {
-        console.log(values);
+        globalThis.console.log(values);
     }
 
     const formik = useFormik({

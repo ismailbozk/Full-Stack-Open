@@ -22,8 +22,12 @@ export interface PageInfo {
     endCursor: string;
 }
 
-export interface RepositoriesResponse {
+export interface RepositoryListWrapper {
     totalCount: number;
     edges: RepositoryEdge[];
     pageInfo: PageInfo;
+}
+
+export interface RepositoryListResponse {
+    repositories: RepositoryListWrapper;
 }
