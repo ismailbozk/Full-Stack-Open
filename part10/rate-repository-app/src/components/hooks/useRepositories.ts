@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { RepositoryListResponse, Repository } from '../../types/Repository';
-
 export interface UseRepositoriesResult {
     repositories: Repository[];
     loading: boolean;
