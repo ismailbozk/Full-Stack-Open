@@ -1,13 +1,33 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import Constants from 'expo-constants';
+import { setContext } from '@apollo/client/link/context';
+import { createHttpLink } from '@apollo/client';
+import AuthStorage from './authStorage';
 
-const createApolloClient = () => {
-  if (!Constants.expoConfig?.extra?.apolloUri || typeof Constants.expoConfig?.extra?.apolloUri !== 'string') {
-    throw new Error('APOLLO_URI is not defined in environment variables');
-  }
+const apolloUri = Constants.expoConfig?.extra?.apolloUri as string;
+const httpLink = createHttpLink({
+  uri: apolloUri,
+});
 
+const createApolloClient = (authStorage: AuthStorage): ApolloClient<unknown> => {
+  const authLink = setContext(async (_request, { headers }: { headers?: Record<string, string> }) => {
+    try {
+      const accessToken = await authStorage.getAccessToken();
+      return {
+        headers: {
+          ...headers,
+          authorization: accessToken ? `Bearer ${accessToken}` : '',
+        },
+      };
+    } catch (e) {
+      globalThis.console.log(e);
+      return {
+        headers,
+      };
+    }
+  });
   return new ApolloClient({
-    uri: Constants.expoConfig?.extra?.apolloUri as string,
+    link: authLink.concat(httpLink),
     cache: new InMemoryCache(),
   });
 };

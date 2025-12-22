@@ -4,7 +4,6 @@ import { useFormik } from "formik";
 import theme from "../../DesignSystem/theme";
 import * as yup from 'yup';
 import { useSignIn } from '../hooks/useSignIn';
-import AuthStorage from '../../utils/authStorage';
 
 const SignIn = () => {
 
@@ -73,12 +72,9 @@ const SignIn = () => {
         try {
             const { data } = await signIn({ username, password });
             globalThis.console.log(data);
-            const authStorageInstance = new AuthStorage();
-            if (data?.authenticate.accessToken) {
-                await authStorageInstance.setAccessToken(data.authenticate.accessToken);
-            }
         } catch (e) {
-            globalThis.console.log(e);
+
+            globalThis.console.log("Something failed", e);
         }
     }
 
