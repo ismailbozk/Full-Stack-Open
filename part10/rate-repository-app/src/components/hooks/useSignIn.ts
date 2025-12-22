@@ -1,19 +1,7 @@
 import { useMutation, MutationResult } from '@apollo/client/react';
 import { FetchResult } from '@apollo/client';
 import { SIGN_IN } from '../../graphql/mutations';
-
-interface SignInCredentials {
-    username: string;
-    password: string;
-}
-
-interface SignInResult {
-    authenticate: AuthPayload
-}
-
-interface AuthPayload {
-    accessToken: string;
-}
+import { SignInCredentials, SignInResult } from '../../types/User';
 
 type UseSignInReturn = [
     (_credentials: SignInCredentials) => Promise<FetchResult<SignInResult>>,
