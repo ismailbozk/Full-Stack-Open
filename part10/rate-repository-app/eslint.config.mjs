@@ -53,6 +53,7 @@ export default defineConfig([{
         "react/prop-types": "off",
         "react/react-in-jsx-scope": "off",
         "import/no-unresolved": "error",
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     },
 },
 // TypeScript-specific config for .ts and .tsx files
@@ -78,6 +79,7 @@ export default defineConfig([{
         "@typescript-eslint/no-unsafe-call": "warn",
         "@typescript-eslint/no-unsafe-member-access": "warn",
         "@typescript-eslint/no-unsafe-return": "warn",
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     },
 }
 ]);

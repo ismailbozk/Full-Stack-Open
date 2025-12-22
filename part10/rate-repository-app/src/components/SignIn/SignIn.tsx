@@ -3,9 +3,11 @@ import { Pressable, StyleProp, Text, TextInput, TextStyle, View } from "react-na
 import { useFormik } from "formik";
 import theme from "../../DesignSystem/theme";
 import * as yup from 'yup';
+import { useSignIn } from '../hooks/useSignIn';
 
 const SignIn = () => {
 
+    const [signIn] = useSignIn();
     const SignInValidationSchema = yup.object().shape({
         username: yup.string().trim()
             .min(3, 'Username must be at least 3 characters long')
@@ -14,10 +16,10 @@ const SignIn = () => {
         password: yup.string()
             .min(6, 'Password must be at least 6 characters long')
             .max(100, 'Password cannot be longer than 100 characters')
-            .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-            .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-            .matches(/[0-9]/, 'Password must contain at least one number')
-            .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character')
+            // .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+            // .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+            // .matches(/[0-9]/, 'Password must contain at least one number')
+            // .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character')
             .required('Password is required'),
     });
 
@@ -65,8 +67,14 @@ const SignIn = () => {
         password: ''
     };
 
-    const onSubmit = (values: SignInProps) => {
-        globalThis.console.log(values);
+    const onSubmit = async (values: SignInProps) => {
+        const { username, password } = values;
+        try {
+            const { data } = await signIn({ username, password });
+            globalThis.console.log(data);
+        } catch (e) {
+            globalThis.console.log(e);
+        }
     }
 
     const formik = useFormik({
