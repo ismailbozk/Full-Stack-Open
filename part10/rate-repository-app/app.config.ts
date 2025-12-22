@@ -30,5 +30,6 @@ export default (): ExpoConfig => ({
   },
   extra: {
     env: process.env?.ENV || 'development',
+    apolloUri: process.env?.APOLLO_URI,
   },
 });
