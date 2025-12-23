@@ -17,9 +17,7 @@ const createApolloClient = (authStorage: AuthStorage): ApolloClient<unknown> => 
         ...headers,
         authorization: accessToken ? `Bearer ${accessToken}` : '',
       };
-      
-      globalThis.console.log('Apollo Client Headers:', requestHeaders);
-      
+            
       return {
         headers: requestHeaders,
       };

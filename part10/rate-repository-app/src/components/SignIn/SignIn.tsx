@@ -4,10 +4,12 @@ import { useFormik } from "formik";
 import theme from "../../DesignSystem/theme";
 import * as yup from 'yup';
 import { useSignIn } from '../hooks/useSignIn';
+import { useNavigate } from 'react-router-native';
 
 const SignIn = () => {
 
     const [signIn] = useSignIn();
+    const navigate = useNavigate();
     const SignInValidationSchema = yup.object().shape({
         username: yup.string().trim()
             .min(3, 'Username must be at least 3 characters long')
@@ -70,8 +72,8 @@ const SignIn = () => {
     const onSubmit = async (values: SignInProps) => {
         const { username, password } = values;
         try {
-            const { data } = await signIn({ username, password });
-            globalThis.console.log(data);
+            await signIn({ username, password });
+            navigate('/');
         } catch (e) {
 
             globalThis.console.log("Something failed", e);
