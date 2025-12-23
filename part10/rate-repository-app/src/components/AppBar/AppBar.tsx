@@ -4,10 +4,7 @@ import theme from '../../DesignSystem/theme';
 import AppBarItem from './AppBarItem';
 import { Link } from 'react-router-native';
 import { useUserInfo } from '../hooks/useUserInfo';
-import useAuthStorage from '../hooks/useAuthStorage';
-import { useApolloClient } from '@apollo/client/react';
-import AuthStorage from '../../utils/authStorage';
-import { useNavigate } from 'react-router-native';
+import { useSignOut } from '../hooks/useSignOut';
 
 const styles = StyleSheet.create({
   container: {
@@ -27,19 +24,7 @@ const styles = StyleSheet.create({
 
 const AppBar = () => {
   const { userInfo } = useUserInfo();
-  const navigate = useNavigate();
-  const authStorage = useAuthStorage();
-  const apolloClient = useApolloClient();
-
-  const handleSignOut = async () => {
-    globalThis.console.log("Signing out...");
-    await authStorage.removeAccessToken();
-    globalThis.console.log("Access token removed");
-    await apolloClient.resetStore();
-    globalThis.console.log("Apollo client store reset");
-    navigate('/signin');
-    globalThis.console.log("Navigated to sign-in page");
-  };
+  const signOut = useSignOut();
 
   return (
     <View style={styles.container}>
@@ -58,7 +43,7 @@ const AppBar = () => {
               </Link>
             </AppBarItem>
             :
-            <AppBarItem onPress={handleSignOut}>
+            <AppBarItem onPress={signOut}>
               <Text style={styles.text}>Sign Out</Text>
             </AppBarItem>
         }
