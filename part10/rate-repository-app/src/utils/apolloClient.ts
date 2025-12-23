@@ -13,11 +13,15 @@ const createApolloClient = (authStorage: AuthStorage): ApolloClient<unknown> => 
   const authLink = setContext(async (_request, { headers }: { headers?: Record<string, string> }) => {
     try {
       const accessToken = await authStorage.getAccessToken();
+      const requestHeaders = {
+        ...headers,
+        authorization: accessToken ? `Bearer ${accessToken}` : '',
+      };
+      
+      globalThis.console.log('Apollo Client Headers:', requestHeaders);
+      
       return {
-        headers: {
-          ...headers,
-          authorization: accessToken ? `Bearer ${accessToken}` : '',
-        },
+        headers: requestHeaders,
       };
     } catch (e) {
       globalThis.console.log(e);

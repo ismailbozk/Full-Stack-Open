@@ -12,9 +12,14 @@ const styles = StyleSheet.create({
 
 });
 
-function AppBarItem({ children }: { children: React.ReactNode }): React.JSX.Element {
+interface AppBarItemProps {
+    children: React.ReactNode;
+    onPress?: () => void;
+}
+
+function AppBarItem({ children, onPress }: AppBarItemProps): React.JSX.Element {
     return (
-        <Pressable style={styles.flexItem}>
+        <Pressable style={styles.flexItem} onPress={onPress}>
             {children}
         </Pressable>
     );

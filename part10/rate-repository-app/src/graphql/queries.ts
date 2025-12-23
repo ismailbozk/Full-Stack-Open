@@ -31,4 +31,11 @@ export const GET_REPOSITORIES = gql`
 }
 `;
 
-// other queries...
+export const USER_INFO = gql`
+  query {
+    me {
+      id
+      username
+    }
+  }
+  `;

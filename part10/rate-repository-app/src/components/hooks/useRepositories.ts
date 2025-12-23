@@ -15,11 +15,7 @@ const useRepositories = (): UseRepositoriesResult => {
             fetchPolicy: 'cache-and-network',
             onError: (error) => {
                 globalThis.console.error("Fetch repositories failed: ", error.message);
-            },
-            onCompleted: () => {
-                globalThis.console.log("Fetch repositories succeeded");
             }
-
         }
     );
     const repositories: Repository[] = data?.repositories?.edges?.map(edge => edge.node) || [];

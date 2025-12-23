@@ -24,11 +24,9 @@ export const useSignIn = (): UseSignInReturn => {
             if (data?.authenticate.accessToken) {
                 try {
                     await authStorageInstance.setAccessToken(data.authenticate.accessToken);
-                    globalThis.console.log("Saved access token to storage");
                     apolloClient.resetStore();
-                    globalThis.console.log("reset apollo client store");
-                } catch (e) {
-                    globalThis.console.error("Failed to store access token: ", e);
+                // eslint-disable-next-line no-empty
+                } catch {
                 }
             }
         }
