@@ -1,10 +1,9 @@
 import React from "react";
 import { View, Text, Pressable, TextInput, StyleProp, TextStyle } from "react-native";
-import { useParams } from "react-router-native";
-import { useRepository } from "../hooks/useRepository";
 import { useFormik } from "formik";
 import theme from "../../DesignSystem/theme";
 import * as yup from 'yup';
+import { useCreateReview } from "../hooks/useCreateReview";
 
 interface AddReviewFormProps {
     repositoryOwnersName: string;
@@ -119,7 +118,7 @@ export function AddReviewFormContainer(props: AddReviewFormContainerProps): Reac
             }
             <TextInput
                 placeholder="Rating between 0 and 100"
-                onChangeText={formik.handleChange('rating')}
+                onChangeText={value => formik.setFieldValue('rating', Number(value))}
                 onBlur={formik.handleBlur('rating')}
                 value={formik.values.rating.toString()}
                 style={getInputStyle('rating')}
@@ -148,10 +147,9 @@ export function AddReviewFormContainer(props: AddReviewFormContainerProps): Reac
             }
 
             <Pressable
-                testID='sign-in-submit-pressable'
                 style={styles.button}
                 onPress={() => formik.handleSubmit()}>
-                <Text style={styles.buttonText}>Sign In</Text>
+                <Text style={styles.buttonText}>Create a Review</Text>
             </Pressable>
         </View>
     );
@@ -159,8 +157,12 @@ export function AddReviewFormContainer(props: AddReviewFormContainerProps): Reac
 
 
 export default function AddReviewForm(): React.JSX.Element {
+    const [createReview] = useCreateReview();
+
     return <AddReviewFormContainer
         onSubmit={async (values: AddReviewFormProps) => {
-            globalThis.console.log(values);
+            globalThis.console.log("Creating review with values: ", values);
+            const result = await createReview(values);
+            globalThis.console.log("Create review result: ", result);
         }} />;
 }
