@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import theme from "../../DesignSystem/theme";
 import * as yup from 'yup';
 import { useCreateReview } from "../hooks/useCreateReview";
+import { useNavigate } from "react-router";
 
 interface AddReviewFormProps {
     repositoryOwnersName: string;
@@ -21,11 +22,11 @@ export function AddReviewFormContainer(props: AddReviewFormContainerProps): Reac
 
     const AddReviewValidationSchema = yup.object().shape({
         repositoryOwnersName: yup.string().trim()
-            .min(3, 'Owner name must be at least 3 characters long')
+            .min(2, 'Owner name must be at least 3 characters long')
             .max(100, 'Owner name cannot be longer than 100 characters')
             .required('Owner name is required'),
         repositoryName: yup.string()
-            .min(6, 'Repository name must be at least 6 characters long')
+            .min(2, 'Repository name must be at least 6 characters long')
             .max(100, 'Repository name cannot be longer than 100 characters')
             .required('Repository name is required'),
         rating: yup.number()
@@ -158,11 +159,13 @@ export function AddReviewFormContainer(props: AddReviewFormContainerProps): Reac
 
 export default function AddReviewForm(): React.JSX.Element {
     const [createReview] = useCreateReview();
+    const navigate = useNavigate();
 
     return <AddReviewFormContainer
         onSubmit={async (values: AddReviewFormProps) => {
-            globalThis.console.log("Creating review with values: ", values);
             const result = await createReview(values);
-            globalThis.console.log("Create review result: ", result);
+            if (result.data?.createReview.repository.id !== null) {
+                navigate(`/repository/${result.data?.createReview.repository.id}`);
+            }
         }} />;
 }

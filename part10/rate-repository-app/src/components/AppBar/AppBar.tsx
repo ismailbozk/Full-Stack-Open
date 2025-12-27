@@ -34,11 +34,6 @@ const AppBar = () => {
             <Text style={styles.text}>Repositories</Text>
           </Link>
         </AppBarItem>
-        <AppBarItem>
-          <Link to="/review">
-            <Text style={styles.text}>Create a review</Text>
-          </Link>
-        </AppBarItem>
         {
           userInfo === null
             ?
@@ -48,9 +43,17 @@ const AppBar = () => {
               </Link>
             </AppBarItem>
             :
-            <AppBarItem onPress={signOut}>
-              <Text style={styles.text}>Sign Out</Text>
-            </AppBarItem>
+            (<>
+              <AppBarItem>
+                <Link to="/review">
+                  <Text style={styles.text}>Create a review</Text>
+                </Link>
+              </AppBarItem>
+              <AppBarItem onPress={signOut}>
+                <Text style={styles.text}>Sign Out</Text>
+              </AppBarItem>
+            </>
+            )
         }
 
       </ScrollView>
