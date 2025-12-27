@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Review } from "../../types/Repository";
 import theme from "../../DesignSystem/theme";
-import { format } from "date-fns/format";
+import { format } from "date-fns";
 
 export interface RepositoryReviewItemProps {
     review: Review;
