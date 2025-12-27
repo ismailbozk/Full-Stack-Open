@@ -34,6 +34,11 @@ const AppBar = () => {
             <Text style={styles.text}>Repositories</Text>
           </Link>
         </AppBarItem>
+        <AppBarItem>
+          <Link to="/review">
+            <Text style={styles.text}>Create a review</Text>
+          </Link>
+        </AppBarItem>
         {
           userInfo === null
             ?
@@ -47,6 +52,7 @@ const AppBar = () => {
               <Text style={styles.text}>Sign Out</Text>
             </AppBarItem>
         }
+
       </ScrollView>
     </View>
   );
