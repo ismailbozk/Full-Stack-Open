@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, View, Text, StyleSheet } from "react-native";
-import { Repository } from "../types/Repository";
-import theme from "../DesignSystem/theme";
+import { Repository } from "../../types/Repository";
+import theme from "../../DesignSystem/theme";
 
 interface RepositoryItemProps {
     repository: Repository;
@@ -27,7 +27,7 @@ function RepositoryItem({ repository }: RepositoryItemProps): React.ReactElement
         tagText: {
             flexShrink: 1,
             color: theme.colors.textPrimary,
-        backgroundColor: theme.colors.tagBackground,
+            backgroundColor: theme.colors.tagBackground,
             alignSelf: 'flex-start',
             padding: theme.spacing.small,
             borderRadius: 5,
@@ -38,9 +38,9 @@ function RepositoryItem({ repository }: RepositoryItemProps): React.ReactElement
     });
 
     function metricItem(value: number, label: string): React.ReactElement {
-        const shortValue: string = (value >= 1000) ? ((Math.round(value / 1000).toFixed(1)).toString() + "k"): value.toString();
+        const shortValue: string = (value >= 1000) ? (((Math.round(value / 100) / 10).toFixed(1)).toString() + "k") : value.toString();
         return (
-            <View style={{ alignItems: 'center', flexDirection: 'column'}}>
+            <View style={{ alignItems: 'center', flexDirection: 'column' }}>
                 <Text style={{ ...styles.text, fontWeight: 'bold' }}>{shortValue}</Text>
                 <Text style={styles.text}>{label}</Text>
             </View>
@@ -48,7 +48,9 @@ function RepositoryItem({ repository }: RepositoryItemProps): React.ReactElement
     }
 
     return (
-        <View style={{ backgroundColor: theme.colors.backgroundPrimary, padding: theme.spacing.large }}>
+        <View
+            testID="RepositoryItem"
+            style={{ backgroundColor: theme.colors.backgroundPrimary, padding: theme.spacing.large }}>
             <View style={{ flexGrow: 1, flexDirection: 'row', }}>
                 <Image
                     source={{ uri: repository.ownerAvatarUrl }}
@@ -63,7 +65,7 @@ function RepositoryItem({ repository }: RepositoryItemProps): React.ReactElement
 
             </View>
 
-            <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: theme.spacing.large}}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: theme.spacing.large }}>
                 {metricItem(repository.stargazersCount, "Stars")}
                 {metricItem(repository.forksCount, "Forks")}
                 {metricItem(repository.reviewCount, "Reviews")}

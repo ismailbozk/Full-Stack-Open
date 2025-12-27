@@ -6,10 +6,17 @@ import * as yup from 'yup';
 import { useSignIn } from '../hooks/useSignIn';
 import { useNavigate } from 'react-router-native';
 
-const SignIn = () => {
+export interface SignInProps {
+    username: string;
+    password: string;
+}
+export interface SignInContainerProps {
+    // eslint-disable-next-line no-unused-vars
+    onSubmit: (values: SignInProps) => Promise<void>;
+}
 
-    const [signIn] = useSignIn();
-    const navigate = useNavigate();
+export const SignInContainer: React.FC<SignInContainerProps> = ({ onSubmit }) => {
+
     const SignInValidationSchema = yup.object().shape({
         username: yup.string().trim()
             .min(3, 'Username must be at least 3 characters long')
@@ -59,26 +66,11 @@ const SignIn = () => {
             fontWeight: theme.fontWeights.bold,
         }
     }
-    interface SignInProps {
-        username: string;
-        password: string;
-    }
 
     const initialValues: SignInProps = {
         username: '',
         password: ''
     };
-
-    const onSubmit = async (values: SignInProps) => {
-        const { username, password } = values;
-        try {
-            await signIn({ username, password });
-            navigate('/');
-        } catch (e) {
-
-            globalThis.console.log("Something failed", e);
-        }
-    }
 
     const formik = useFormik({
         initialValues,
@@ -95,6 +87,7 @@ const SignIn = () => {
         <View style={styles.form}>
 
             <TextInput
+                testID='sign-in-user-name-input'
                 placeholder="User name"
                 onChangeText={formik.handleChange('username')}
                 onBlur={formik.handleBlur('username')}
@@ -108,6 +101,7 @@ const SignIn = () => {
             }
 
             <TextInput
+                testID='sign-in-password-input'
                 placeholder="Password"
                 secureTextEntry
                 onChangeText={formik.handleChange('password')}
@@ -122,12 +116,32 @@ const SignIn = () => {
             }
 
             <Pressable
+                testID='sign-in-submit-pressable'
                 style={styles.button}
                 onPress={() => formik.handleSubmit()}>
                 <Text style={styles.buttonText}>Sign In</Text>
             </Pressable>
         </View>
     );
+};
+
+const SignIn = (): React.JSX.Element => {
+
+    const [signIn] = useSignIn();
+    const navigate = useNavigate();
+
+    const onSubmit = async (values: SignInProps) => {
+        const { username, password } = values;
+        try {
+            await signIn({ username, password });
+            navigate('/');
+        } catch (e) {
+
+            globalThis.console.log("Something failed", e);
+        }
+    }
+
+    return <SignInContainer onSubmit={onSubmit} />;
 };
 
 export default SignIn;
