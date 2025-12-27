@@ -17,7 +17,6 @@ export const GET_REPOSITORIES = gql`
         reviewCount
         stargazersCount
         watchersCount
-        url
       }
       cursor
     }
@@ -57,5 +56,24 @@ export const GET_REPOSITORY = gql`
     stargazersCount
     watchersCount
     url
+    reviews {
+      edges {
+        node {
+          id
+          rating
+          text
+          user {
+            id
+            username
+          }
+          userId
+          createdAt
+        }
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
   }
-}`;
+}
+`;

@@ -10,3 +10,8 @@ export interface SignInResult {
 export interface AuthPayload {
     accessToken: string;
 }
+
+export interface User {
+    id: string;
+    username: string;
+}

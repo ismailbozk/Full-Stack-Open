@@ -1,3 +1,5 @@
+import { User } from "./User";
+
 export interface Repository {
     id: string;
     fullName: string;
@@ -8,7 +10,6 @@ export interface Repository {
     description: string;
     language: string;
     ownerAvatarUrl: string;
-    url: string;
 }
 
 export interface RepositoryEdge {
@@ -31,4 +32,35 @@ export interface RepositoryListWrapper {
 
 export interface RepositoryListResponse {
     repositories: RepositoryListWrapper;
+}
+
+export interface Review {
+    id: string;
+    rating: number;
+    text: string;
+    user: User;
+    userId: string;
+    createdAt: string;
+}
+
+export interface ReviewEdge {
+    node: Review;
+}
+
+export interface ReviewPageInfo {
+    hasNextPage: boolean;
+}
+
+export interface ReviewsWrapper {
+    edges: ReviewEdge[];
+    pageInfo: ReviewPageInfo;
+}
+
+export interface RepositoryDetail extends Repository {
+    url: string;
+    reviews: ReviewsWrapper;
+}
+
+export interface RepositoryDetailResponse {
+    repository: RepositoryDetail;
 }

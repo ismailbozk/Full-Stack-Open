@@ -1,53 +1,42 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable, Linking } from "react-native";
-import { Link, useParams } from "react-router-native";
-import theme from "../../DesignSystem/theme";
-import RepositoryItem from "./RepositoryItem";
+import { View, Text, Linking, FlatList, StyleSheet } from "react-native";
+import { useParams } from "react-router-native";
 import { useRepository } from "../hooks/useRepository";
+import { RepositoryDetailHeader } from "./RepositoryDetailHeader";
+import RepositoryReviewItem from "./RepositoryReviewItem";
+import VerticalSeperator from "../Common/VerticalSeperator";
 
 export function RepositoryDetail(): React.ReactElement {
     const { repositoryId } = useParams();
     const { repository } = useRepository(repositoryId || "");
-
-    const styles = {
-        button: {
-            height: 40,
-            backgroundColor: theme.colors.primary,
-            flexGrow: 1,
-            padding: theme.spacing.medium,
-            borderRadius: theme.form.borderRadius,
-            justifyContent: 'center' as const,
-            alignItems: 'center' as const,
-        },
-        buttonText: {
-            color: 'white',
-            fontWeight: theme.fontWeights.bold,
-        }
-    }
-
+    
+    const reviews = repository?.reviews.edges.map(edge => edge.node) || [];
     const onPress = (url: string): void => {
         Linking.openURL(url);
     }
 
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+        }
+    });
+
     return (
-        <View testID="RepositoryDetail">
+        <View testID="RepositoryDetail" style={styles.container}>
             {
                 (repository !== undefined) ? (
-                    <View>
-                        <RepositoryItem repository={repository} />
-                        <Pressable
-                            testID='open-in-github-pressable'
-                            style={{ ...styles.button, margin: theme.spacing.large }}
-                            onPress={() => onPress(repository.url)}>
-                            <Text style={styles.buttonText}>Open in GitHub</Text>
-                        </Pressable>
-                    </View>
-
+                    <FlatList
+                        data={reviews}
+                        renderItem={({ item }) => <RepositoryReviewItem review={item} />}
+                        keyExtractor={({ id }) => id}
+                        ListHeaderComponent={() => <RepositoryDetailHeader repository={repository} onOpenInGitHub={onPress} />}
+                        ItemSeparatorComponent={VerticalSeperator}
+                        contentContainerStyle={{ paddingBottom: 20 }}
+                    />
                 ) : (
                     <Text testID='LoadingText'>Loading...</Text>
                 )
             }
-
         </ View >
     );
 };

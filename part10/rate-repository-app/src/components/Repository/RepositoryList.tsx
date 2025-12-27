@@ -1,11 +1,11 @@
 import React from "react";
-import { FlatList, View, StyleSheet, Pressable } from "react-native";
+import { FlatList, Pressable } from "react-native";
 import "whatwg-fetch";
 import useRepositories from "../hooks/useRepositories";
 import RepositoryItem from "./RepositoryItem";
-import theme from "../../DesignSystem/theme";
 import { Repository } from "../../types/Repository";
 import { useNavigate } from "react-router";
+import VerticalSeperator from "../Common/VerticalSeperator";
 
 export interface RepositoryListProps {
     repositories: Repository[];
@@ -14,16 +14,6 @@ export interface RepositoryListProps {
 }
 
 export const RepositoryListContainer = (props: RepositoryListProps) => {
-
-    const ItemSeparator = () => <View style={styles.separator} />;
-
-    const styles = StyleSheet.create({
-        separator: {
-            height: 10,
-            backgroundColor: theme.colors.separatorColor,
-        },
-    });
-
     return (
         <FlatList
             data={props.repositories}
@@ -33,7 +23,7 @@ export const RepositoryListContainer = (props: RepositoryListProps) => {
                     <RepositoryItem repository={item} />
                 </Pressable>
             )}
-            ItemSeparatorComponent={ItemSeparator}
+            ItemSeparatorComponent={VerticalSeperator}
         />
     );
 };
