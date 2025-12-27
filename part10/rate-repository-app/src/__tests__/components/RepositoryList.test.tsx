@@ -52,7 +52,7 @@ describe('RepositoryList', () => {
 
             // Transform to Repository array
             const repositoryArray: Repository[] = repositoriesData.repositories.edges.map(edge => edge.node);
-            render(<RepositoryListContainer repositories={repositoryArray} />);
+            render(<RepositoryListContainer repositories={repositoryArray} onPress={() => {}} />);
             const items = screen.getAllByTestId('RepositoryItem');
 
             expect(items).toHaveLength(2);
