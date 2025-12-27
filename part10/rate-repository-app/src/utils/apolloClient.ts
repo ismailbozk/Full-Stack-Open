@@ -22,7 +22,7 @@ const createApolloClient = (authStorage: AuthStorage): ApolloClient<unknown> => 
         headers: requestHeaders,
       };
     } catch (e) {
-      globalThis.console.log(e);
+      globalThis.console.error(e);
       return {
         headers,
       };

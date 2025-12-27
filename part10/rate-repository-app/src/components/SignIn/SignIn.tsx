@@ -136,8 +136,7 @@ const SignIn = (): React.JSX.Element => {
             await signIn({ username, password });
             navigate('/');
         } catch (e) {
-
-            globalThis.console.log("Something failed", e);
+            globalThis.console.error("Something failed during sign in", e);
         }
     }
 

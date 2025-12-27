@@ -20,7 +20,6 @@ export const useSignIn = (): UseSignInReturn => {
             globalThis.console.error("Sign in failed: ", error.message);
         },
         onCompleted: async (data) => {
-            globalThis.console.log("Sign in succeeded, access token: ", data.authenticate.accessToken);
             if (data?.authenticate.accessToken) {
                 try {
                     await authStorageInstance.setAccessToken(data.authenticate.accessToken);

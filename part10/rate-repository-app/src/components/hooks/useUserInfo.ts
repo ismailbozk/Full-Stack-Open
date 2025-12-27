@@ -29,7 +29,6 @@ export const useUserInfo = (): UseUserInfoReturn => {
                 globalThis.console.error("Fetch repositories failed: ", error.message);
             },
             onCompleted: async () => {
-                globalThis.console.log("Fetch repositories succeeded");
                 await authStorageInstance.removeAccessToken()
                 await apolloClient.resetStore();
             }

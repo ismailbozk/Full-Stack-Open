@@ -35,7 +35,6 @@ const theme = {
   },
   form: {
     borderRadius: 3,
-
   }
 };
 

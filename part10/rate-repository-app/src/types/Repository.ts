@@ -8,6 +8,7 @@ export interface Repository {
     description: string;
     language: string;
     ownerAvatarUrl: string;
+    url: string;
 }
 
 export interface RepositoryEdge {

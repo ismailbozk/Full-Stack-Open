@@ -9,13 +9,9 @@ export const useSignOut = () => {
 
     const signOut = async () => {
         try {
-            globalThis.console.log("Signing out...");
             await authStorage.removeAccessToken();
-            globalThis.console.log("Access token removed");
             await apolloClient.resetStore();
-            globalThis.console.log("Apollo client store reset");
             navigate('/signin');
-            globalThis.console.log("Navigated to sign-in page");
         } catch (error) {
             globalThis.console.error("Sign out failed:", error);
             throw error;
