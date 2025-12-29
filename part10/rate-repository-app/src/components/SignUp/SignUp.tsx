@@ -4,6 +4,8 @@ import { useFormik } from "formik";
 import styles from "../../DesignSystem/FormStyles";
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-native';
+import { useCreateUser } from '../hooks/useCreateUser';
+import { useSignIn } from '../hooks/useSignIn';
 
 export interface SignUpProps {
     username: string;
@@ -29,7 +31,7 @@ export const SignUpContainer: React.FC<SignUpContainerProps> = ({ onSubmit }) =>
         repassword: yup.string()
             .min(5, 'Password must be at least 5 characters long')
             .max(30, 'Password cannot be longer than 30 characters')
-            .oneOf([yup.ref('password')], 'Passwords must match')
+            .oneOf([yup.ref('password')], 'Passwords must match') // this is how you validate if the passwords are the same
             .required('Password is required'),
     });
 
@@ -107,13 +109,15 @@ export const SignUpContainer: React.FC<SignUpContainerProps> = ({ onSubmit }) =>
 
 const SignUp = (): React.JSX.Element => {
 
-    // const [signIn] = useSignIn();
+    const [signIn] = useSignIn();
+    const [createUser] = useCreateUser();
     const navigate = useNavigate();
 
     const onSubmit = async (values: SignUpProps) => {
         // const { username, password, repassword } = values;
         try {
-            // await signIn({ username, password });
+            await createUser({ username: values.username, password: values.password });
+            await signIn({ username: values.username, password: values.password });
             navigate('/');
         } catch (e) {
             globalThis.console.error("Something failed during sign in", e);
