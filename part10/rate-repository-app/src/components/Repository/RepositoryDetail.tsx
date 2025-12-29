@@ -8,8 +8,8 @@ import VerticalSeperator from "../Common/VerticalSeperator";
 
 export function RepositoryDetail(): React.ReactElement {
     const { repositoryId } = useParams();
-    const { repository } = useRepository(repositoryId || "");
-    
+    const { repository, fetchMore } = useRepository(repositoryId || "");
+
     const reviews = repository?.reviews.edges.map(edge => edge.node) || [];
     const onPress = (url: string): void => {
         Linking.openURL(url);
@@ -21,6 +21,12 @@ export function RepositoryDetail(): React.ReactElement {
         }
     });
 
+    const handleFetchMore = async () => {
+        globalThis.console.log("Fetch more called");
+        await fetchMore();
+
+        globalThis.console.log("Fetch more completed: ", reviews.length);
+    }
     return (
         <View testID="RepositoryDetail" style={styles.container}>
             {
@@ -32,10 +38,12 @@ export function RepositoryDetail(): React.ReactElement {
                         ListHeaderComponent={() => <RepositoryDetailHeader repository={repository} onOpenInGitHub={onPress} />}
                         ItemSeparatorComponent={VerticalSeperator}
                         contentContainerStyle={{ paddingBottom: 20 }}
+                        onEndReached={handleFetchMore}
+                        onEndReachedThreshold={0.5}
                     />
-                ) : (
-                    <Text testID='LoadingText'>Loading...</Text>
-                )
+            ) : (
+            <Text testID='LoadingText'>Loading...</Text>
+            )
             }
         </ View >
     );
