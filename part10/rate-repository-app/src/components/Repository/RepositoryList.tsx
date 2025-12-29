@@ -75,17 +75,22 @@ export const RepositoryListContainer = (props: RepositoryListProps) => {
 
 function RepositoryList(): React.ReactElement {
 
-    const { repositories, refetch } = useRepositories({ orderBy: RepositoryOrderBy.CREATED_AT, direction: RepositoryOrderDirection.DESC });
+    const [search, setSearch] = React.useState<string>("");
+    const [selectedOrder, setSelectedOrder] = React.useState<RepositoryListOrderOptions>(RepositoryListOrderOptions.LASTEST);
+    const [userInput, setUserInput] = React.useState<RepositoryListUserInput>({ searchText: search, selectedOrder: selectedOrder });
+
+    const { repositories, refetch } = useRepositories({ orderBy: RepositoryOrderBy.CREATED_AT, orderDirection: RepositoryOrderDirection.DESC });
+
     const navigate = useNavigate();
 
-    const [userInput, setUserInput] = React.useState<RepositoryListUserInput>();
-    const [search, setSearch] = React.useState<string>();
-    const [selectedOrder, setSelectedOrder] = React.useState<RepositoryListOrderOptions>();
-
+    const isFirstDebounceRun = React.useRef(true);
     useEffect(() => {
+        if (isFirstDebounceRun.current) {
+            isFirstDebounceRun.current = false;
+            return;
+        }
         const handler = globalThis.setTimeout(() => {
-            globalThis.console.log("Setting debounced search: ", search, Date.now());
-            setUserInput({ searchText: search ?? "", selectedOrder: selectedOrder ?? RepositoryListOrderOptions.LASTEST });
+            setUserInput({ searchText: search, selectedOrder: selectedOrder });
         }, 400); // 0.4 seconds
 
         return () => {
@@ -93,7 +98,22 @@ function RepositoryList(): React.ReactElement {
         };
     }, [search]);
 
+    const isFirstOrderRun = React.useRef(true);
     useEffect(() => {
+        if (isFirstOrderRun.current) {
+            isFirstOrderRun.current = false;
+            return;
+        }
+        setUserInput({ searchText: userInput.searchText, selectedOrder: selectedOrder });
+    }, [selectedOrder]);
+
+    const isFirstInputRun = React.useRef(true);
+    useEffect(() => {
+        if (isFirstInputRun.current) {
+            isFirstInputRun.current = false;
+            return;
+        }
+
         const orderBy = selectedOrder === RepositoryListOrderOptions.LASTEST
             ? RepositoryOrderBy.CREATED_AT
             : RepositoryOrderBy.RATING_AVERAGE;
@@ -101,13 +121,14 @@ function RepositoryList(): React.ReactElement {
         const orderDirection = selectedOrder === RepositoryListOrderOptions.LOWEST_RATED
             ? RepositoryOrderDirection.ASC
             : RepositoryOrderDirection.DESC;
-        const debouncedSearch = userInput?.searchText;
 
+        const debouncedSearch = userInput?.searchText;
+        globalThis.console.log("Refetching with: ", { orderBy, orderDirection, debouncedSearch });
         refetch(
             {
                 orderBy: orderBy,
-                direction: orderDirection,
-                ...(debouncedSearch ? { searchKeyword: debouncedSearch } : {})
+                orderDirection: orderDirection,
+                searchKeyword: debouncedSearch
             }
         );
     }, [userInput]);

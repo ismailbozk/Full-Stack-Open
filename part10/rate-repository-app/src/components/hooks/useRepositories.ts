@@ -5,7 +5,8 @@ import { GET_REPOSITORIES } from '../../graphql/queries';
 
 export interface RepositoryQueryVariables {
     orderBy: string;
-    direction: string;
+    orderDirection: string;
+    searchKeyword?: string;
 }
 
 export interface UseRepositoriesResult {
@@ -21,7 +22,7 @@ const useRepositories = (initialValues: RepositoryQueryVariables): UseRepositori
             fetchPolicy: 'cache-and-network',
             variables: {
                 orderBy: initialValues.orderBy,
-                orderDirection: initialValues.direction
+                orderDirection: initialValues.orderDirection
             },
             onError: (error) => {
                 globalThis.console.error("Fetch repositories failed: ", error.message);
