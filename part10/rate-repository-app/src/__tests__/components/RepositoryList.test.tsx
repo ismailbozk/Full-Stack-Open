@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react-native';
 
 import { RepositoryListContainer } from "../../components/Repository/RepositoryList";
 import { RepositoryListResponse, Repository } from '../../types/Repository';
-
+import { RepositoryListOrderOptions } from '../../components/Repository/RepositoryList';
 describe('RepositoryList', () => {
     const repositoriesData: RepositoryListResponse = {
         repositories: {
@@ -52,7 +52,7 @@ describe('RepositoryList', () => {
 
             // Transform to Repository array
             const repositoryArray: Repository[] = repositoriesData.repositories.edges.map(edge => edge.node);
-            render(<RepositoryListContainer repositories={repositoryArray} onPress={() => {}} />);
+            render(<RepositoryListContainer repositories={repositoryArray} onPress={() => {} } searchText="" setSearchText={() => {}} selectedOrder={RepositoryListOrderOptions.LASTEST} setSelectedOrder={() => {}} />);
             const items = screen.getAllByTestId('RepositoryItem');
 
             expect(items).toHaveLength(2);

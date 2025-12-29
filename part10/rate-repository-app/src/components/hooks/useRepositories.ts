@@ -16,7 +16,6 @@ export interface UseRepositoriesResult {
 }
 
 const useRepositories = (initialValues: RepositoryQueryVariables): UseRepositoriesResult => {
-
     const { data, loading, refetch } = useQuery<RepositoryListResponse>(GET_REPOSITORIES,
         {
             fetchPolicy: 'cache-and-network',
