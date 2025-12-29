@@ -3,7 +3,7 @@ import { USER_INFO } from '../../graphql/queries';
 import AuthStorage from '../../utils/authStorage';
 import useAuthStorage from './useAuthStorage';
 import { useApolloClient } from '@apollo/client/react';
-import { ReviewsWrapper } from '../../types/Repository';
+import { ReviewsWrapper } from '../../types/Review';
 
 export interface UserInfo {
     id: string;

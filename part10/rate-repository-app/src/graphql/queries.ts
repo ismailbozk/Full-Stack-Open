@@ -49,6 +49,10 @@ export const USER_INFO = gql`
             }
             userId
             createdAt
+            repositoryId
+            repository {
+              url
+            }
           }
         }
         pageInfo {
