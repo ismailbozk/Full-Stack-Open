@@ -3,10 +3,12 @@ import { USER_INFO } from '../../graphql/queries';
 import AuthStorage from '../../utils/authStorage';
 import useAuthStorage from './useAuthStorage';
 import { useApolloClient } from '@apollo/client/react';
+import { ReviewsWrapper } from '../../types/Repository';
 
 export interface UserInfo {
     id: string;
     username: string;
+    reviews?: ReviewsWrapper;
 }
 
 interface UseUserInfoResult {
@@ -18,19 +20,24 @@ export interface UseUserInfoReturn {
     loading: boolean;
 }
 
-export const useUserInfo = (): UseUserInfoReturn => {
+export const useUserInfo = (withReviews: boolean = false): UseUserInfoReturn => {
     const authStorageInstance: AuthStorage = useAuthStorage();
     const apolloClient = useApolloClient();
 
     const { data, loading } = useQuery<UseUserInfoResult>(USER_INFO,
         {
             fetchPolicy: 'cache-and-network',
+            variables: {
+                withReviews: withReviews
+            },
             onError: (error) => {
                 globalThis.console.error("Fetch repositories failed: ", error.message);
             },
             onCompleted: async () => {
-                await authStorageInstance.removeAccessToken()
-                await apolloClient.resetStore();
+                if (data?.me === null) {
+                    await authStorageInstance.removeAccessToken()
+                    await apolloClient.resetStore();
+                }
             }
         }
     );

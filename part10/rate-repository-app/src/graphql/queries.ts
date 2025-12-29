@@ -32,10 +32,29 @@ query Repositories($orderBy: AllRepositoriesOrderBy, $orderDirection: OrderDirec
 `;
 
 export const USER_INFO = gql`
-  query {
+  query UserInfo($withReviews: Boolean = false) {
     me {
       id
       username
+      reviewCount
+      reviews @include(if: $withReviews) {
+        edges {
+          node {
+            id
+            rating
+            text
+            user {
+              id
+              username
+            }
+            userId
+            createdAt
+          }
+        }
+        pageInfo {
+          hasNextPage
+        }
+      }
     }
   }
 `;

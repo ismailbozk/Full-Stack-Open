@@ -58,6 +58,11 @@ const AppBar = () => {
                   <Text style={styles.text}>Create a review</Text>
                 </Link>
               </AppBarItem>
+              <AppBarItem>
+                <Link to="/myreviews">
+                  <Text style={styles.text}>My reviews</Text>
+                </Link>
+              </AppBarItem>
               <AppBarItem onPress={signOut}>
                 <Text style={styles.text}>Sign Out</Text>
               </AppBarItem>

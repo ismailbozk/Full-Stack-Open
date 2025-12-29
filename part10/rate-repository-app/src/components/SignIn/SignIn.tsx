@@ -19,12 +19,12 @@ export const SignInContainer: React.FC<SignInContainerProps> = ({ onSubmit }) =>
 
     const SignInValidationSchema = yup.object().shape({
         username: yup.string().trim()
-            .min(3, 'Username must be at least 3 characters long')
-            .max(100, 'Username cannot be longer than 100 characters')
+            .min(5, 'Username must be at least 5 characters long')
+            .max(30, 'Username cannot be longer than 30 characters')
             .required('Username is required'),
         password: yup.string()
-            .min(6, 'Password must be at least 6 characters long')
-            .max(100, 'Password cannot be longer than 100 characters')
+            .min(5, 'Password must be at least 5 characters long')
+            .max(30, 'Password cannot be longer than 30 characters')
             // .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
             // .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
             // .matches(/[0-9]/, 'Password must contain at least one number')
