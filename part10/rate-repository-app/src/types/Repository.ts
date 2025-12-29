@@ -64,3 +64,17 @@ export interface RepositoryDetail extends Repository {
 export interface RepositoryDetailResponse {
     repository: RepositoryDetail;
 }
+
+export enum RepositoryOrderDirection {
+    // eslint-disable-next-line no-unused-vars
+    ASC = 'ASC',
+    // eslint-disable-next-line no-unused-vars
+    DESC = 'DESC',
+}
+
+export enum RepositoryOrderBy {
+    // eslint-disable-next-line no-unused-vars
+    CREATED_AT = 'CREATED_AT',
+    // eslint-disable-next-line no-unused-vars
+    RATING_AVERAGE = 'RATING_AVERAGE',
+}
