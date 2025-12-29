@@ -4,6 +4,7 @@ import AuthStorage from '../../utils/authStorage';
 import useAuthStorage from './useAuthStorage';
 import { useApolloClient } from '@apollo/client/react';
 import { ReviewsWrapper } from '../../types/Review';
+import { FetchResult } from '@apollo/client';
 
 export interface UserInfo {
     id: string;
@@ -18,13 +19,14 @@ interface UseUserInfoResult {
 export interface UseUserInfoReturn {
     userInfo: UserInfo | null;
     loading: boolean;
+    refetch: () => Promise<FetchResult<UseUserInfoResult>>;
 }
 
 export const useUserInfo = (withReviews: boolean = false): UseUserInfoReturn => {
     const authStorageInstance: AuthStorage = useAuthStorage();
     const apolloClient = useApolloClient();
 
-    const { data, loading } = useQuery<UseUserInfoResult>(USER_INFO,
+    const { data, loading, refetch } = useQuery<UseUserInfoResult>(USER_INFO,
         {
             fetchPolicy: 'cache-and-network',
             variables: {
@@ -44,5 +46,5 @@ export const useUserInfo = (withReviews: boolean = false): UseUserInfoReturn => 
 
     globalThis.console.log("User info data: ", data);
 
-    return { userInfo: data?.me || null, loading };
+    return { userInfo: data?.me || null, loading, refetch};
 };
