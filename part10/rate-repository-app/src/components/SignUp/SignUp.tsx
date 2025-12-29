@@ -1,49 +1,51 @@
 import React from 'react';
 import { Pressable, StyleProp, Text, TextInput, TextStyle, View } from "react-native";
 import { useFormik } from "formik";
-import * as yup from 'yup';
-import { useSignIn } from '../hooks/useSignIn';
-import { useNavigate } from 'react-router-native';
 import styles from "../../DesignSystem/FormStyles";
+import * as yup from 'yup';
+import { useNavigate } from 'react-router-native';
 
-export interface SignInProps {
+export interface SignUpProps {
     username: string;
     password: string;
+    repassword: string;
 }
-export interface SignInContainerProps {
+export interface SignUpContainerProps {
     // eslint-disable-next-line no-unused-vars
-    onSubmit: (values: SignInProps) => Promise<void>;
+    onSubmit: (values: SignUpProps) => Promise<void>;
 }
 
-export const SignInContainer: React.FC<SignInContainerProps> = ({ onSubmit }) => {
+export const SignUpContainer: React.FC<SignUpContainerProps> = ({ onSubmit }) => {
 
-    const SignInValidationSchema = yup.object().shape({
+    const SignUpValidationSchema = yup.object().shape({
         username: yup.string().trim()
-            .min(3, 'Username must be at least 3 characters long')
-            .max(100, 'Username cannot be longer than 100 characters')
+            .min(5, 'Username must be at least 5 characters long')
+            .max(30, 'Username cannot be longer than 30 characters')
             .required('Username is required'),
         password: yup.string()
-            .min(6, 'Password must be at least 6 characters long')
-            .max(100, 'Password cannot be longer than 100 characters')
-            // .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-            // .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-            // .matches(/[0-9]/, 'Password must contain at least one number')
-            // .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character')
+            .min(5, 'Password must be at least 5 characters long')
+            .max(30, 'Password cannot be longer than 30 characters')
+            .required('Password is required'),
+        repassword: yup.string()
+            .min(5, 'Password must be at least 5 characters long')
+            .max(30, 'Password cannot be longer than 30 characters')
+            .oneOf([yup.ref('password')], 'Passwords must match')
             .required('Password is required'),
     });
 
-    const initialValues: SignInProps = {
+    const initialValues: SignUpProps = {
         username: '',
-        password: ''
+        password: '',
+        repassword: ''
     };
 
     const formik = useFormik({
         initialValues,
-        validationSchema: SignInValidationSchema,
+        validationSchema: SignUpValidationSchema,
         onSubmit,
     });
 
-    const getInputStyle = (fieldName: keyof SignInProps): StyleProp<TextStyle> => {
+    const getInputStyle = (fieldName: keyof SignUpProps): StyleProp<TextStyle> => {
         const hasError = formik.touched[fieldName] && formik.errors[fieldName];
         return [styles.input, hasError ? styles.inputError : undefined];
     };
@@ -52,7 +54,7 @@ export const SignInContainer: React.FC<SignInContainerProps> = ({ onSubmit }) =>
         <View style={styles.form}>
 
             <TextInput
-                testID='sign-in-user-name-input'
+                testID='sign-up-user-name-input'
                 placeholder="User name"
                 onChangeText={formik.handleChange('username')}
                 onBlur={formik.handleBlur('username')}
@@ -64,9 +66,8 @@ export const SignInContainer: React.FC<SignInContainerProps> = ({ onSubmit }) =>
                     <Text style={styles.errorText}>{formik.errors.username}</Text>
                 )
             }
-
             <TextInput
-                testID='sign-in-password-input'
+                testID='sign-up-password-input'
                 placeholder="Password"
                 secureTextEntry
                 onChangeText={formik.handleChange('password')}
@@ -79,33 +80,47 @@ export const SignInContainer: React.FC<SignInContainerProps> = ({ onSubmit }) =>
                     <Text style={styles.errorText}>{formik.errors.password}</Text>
                 )
             }
+            <TextInput
+                testID='sign-up-repassword-input'
+                placeholder="Re-enter Password"
+                secureTextEntry
+                onChangeText={formik.handleChange('repassword')}
+                onBlur={formik.handleBlur('repassword')}
+                value={formik.values.repassword}
+                style={getInputStyle('repassword')}
+            />
+            {
+                formik.touched.repassword && formik.errors.repassword && (
+                    <Text style={styles.errorText}>{formik.errors.repassword}</Text>
+                )
+            }
 
             <Pressable
                 testID='sign-in-submit-pressable'
                 style={styles.button}
                 onPress={() => formik.handleSubmit()}>
-                <Text style={styles.buttonText}>Sign In</Text>
+                <Text style={styles.buttonText}>Sign Up</Text>
             </Pressable>
         </View>
     );
 };
 
-const SignIn = (): React.JSX.Element => {
+const SignUp = (): React.JSX.Element => {
 
-    const [signIn] = useSignIn();
+    // const [signIn] = useSignIn();
     const navigate = useNavigate();
 
-    const onSubmit = async (values: SignInProps) => {
-        const { username, password } = values;
+    const onSubmit = async (values: SignUpProps) => {
+        // const { username, password, repassword } = values;
         try {
-            await signIn({ username, password });
+            // await signIn({ username, password });
             navigate('/');
         } catch (e) {
             globalThis.console.error("Something failed during sign in", e);
         }
     }
 
-    return <SignInContainer onSubmit={onSubmit} />;
+    return <SignUpContainer onSubmit={onSubmit} />;
 };
 
-export default SignIn;
+export default SignUp;

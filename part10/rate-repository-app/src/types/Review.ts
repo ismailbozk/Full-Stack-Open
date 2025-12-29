@@ -11,3 +11,10 @@ export interface CreateReviewResponseData {
 export interface CreateReviewResponse {
     createReview: CreateReviewResponseData;
 }
+
+export interface AddReviewFormInputs {
+    repositoryOwnersName: string;
+    repositoryName: string;
+    rating: number;
+    reviewText: string;
+}

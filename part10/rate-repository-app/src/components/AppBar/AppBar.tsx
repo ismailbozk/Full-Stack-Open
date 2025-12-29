@@ -37,11 +37,20 @@ const AppBar = () => {
         {
           userInfo === null
             ?
-            <AppBarItem>
-              <Link to="/signin">
-                <Text style={styles.text}>Sign In</Text>
-              </Link>
-            </AppBarItem>
+            (
+              <>
+                <AppBarItem>
+                  <Link to="/signin">
+                    <Text style={styles.text}>Sign In</Text>
+                  </Link>
+                </AppBarItem>
+                <AppBarItem>
+                  <Link to="/signup">
+                    <Text style={styles.text}>Sign Up</Text>
+                  </Link>
+                </AppBarItem>
+              </>
+            )
             :
             (<>
               <AppBarItem>
