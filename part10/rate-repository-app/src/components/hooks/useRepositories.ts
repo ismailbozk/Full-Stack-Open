@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client/react';
 import { GET_REPOSITORIES } from '../../graphql/queries';
 
 export interface RepositoryQueryVariables {
+    first?: number;
     orderBy: string;
     orderDirection: string;
     searchKeyword?: string;
@@ -14,13 +15,15 @@ export interface UseRepositoriesResult {
     loading: boolean;
     // eslint-disable-next-line no-unused-vars
     refetch: (variables: RepositoryQueryVariables) => void;
+    fetchMore: () => Promise<void>;
 }
 
 const useRepositories = (initialValues: RepositoryQueryVariables): UseRepositoriesResult => {
-    const { data, loading, refetch } = useQuery<RepositoryListResponse>(GET_REPOSITORIES,
+    const { data, loading, refetch, fetchMore } = useQuery<RepositoryListResponse>(GET_REPOSITORIES,
         {
             fetchPolicy: 'cache-and-network',
             variables: {
+                first: initialValues.first ?? 10,
                 orderBy: initialValues.orderBy,
                 orderDirection: initialValues.orderDirection
             },
@@ -29,13 +32,27 @@ const useRepositories = (initialValues: RepositoryQueryVariables): UseRepositori
             }
         }
     );
+    const handleFetchMore = async () => {
+        const canFetchMore = !loading && data?.repositories.pageInfo.hasNextPage;
+
+        if (!canFetchMore) {
+            return;
+        }
+
+        await fetchMore({
+            variables: {
+                after: data.repositories.pageInfo.endCursor,
+                ...initialValues,
+            },
+        });
+    };
     const repositories: Repository[] = data?.repositories?.edges?.map(edge => edge.node) || [];
     return {
         repositories,
         loading,
-        refetch
+        refetch,
+        fetchMore: handleFetchMore,
     };
-
 };
 
-export default useRepositories;
+    export default useRepositories;

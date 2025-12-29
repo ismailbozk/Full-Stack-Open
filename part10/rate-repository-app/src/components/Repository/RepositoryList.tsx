@@ -35,6 +35,7 @@ export interface RepositoryListProps {
 
     // eslint-disable-next-line no-unused-vars
     onPress: (repositoryId: string) => void;
+    onEndReach: () => void;
 }
 
 
@@ -68,6 +69,8 @@ export const RepositoryListContainer = (props: RepositoryListProps) => {
                         value={props.searchText}
                     />
                 }
+                onEndReached={props.onEndReach}
+                onEndReachedThreshold={0.5}
             />
         </View>
     );
@@ -79,7 +82,7 @@ function RepositoryList(): React.ReactElement {
     const [selectedOrder, setSelectedOrder] = React.useState<RepositoryListOrderOptions>(RepositoryListOrderOptions.LASTEST);
     const [userInput, setUserInput] = React.useState<RepositoryListUserInput>({ searchText: search, selectedOrder: selectedOrder });
 
-    const { repositories, refetch } = useRepositories({ orderBy: RepositoryOrderBy.CREATED_AT, orderDirection: RepositoryOrderDirection.DESC });
+    const { repositories, refetch, fetchMore } = useRepositories({ orderBy: RepositoryOrderBy.CREATED_AT, orderDirection: RepositoryOrderDirection.DESC, first: 4 });
 
     const navigate = useNavigate();
 
@@ -123,16 +126,21 @@ function RepositoryList(): React.ReactElement {
             : RepositoryOrderDirection.DESC;
 
         const debouncedSearch = userInput?.searchText;
-        globalThis.console.log("Refetching with: ", { orderBy, orderDirection, debouncedSearch });
+        globalThis.console.log("Refetching with: ", { orderBy, orderDirection, debouncedSearch, first: 4 });
         refetch(
             {
                 orderBy: orderBy,
                 orderDirection: orderDirection,
-                searchKeyword: debouncedSearch
+                searchKeyword: debouncedSearch,
+                first: 4
             }
         );
     }, [userInput]);
 
+    const onEndReach = async () => {
+        await fetchMore();  
+    };
+    
     return <RepositoryListContainer
         repositories={repositories}
         selectedOrder={selectedOrder}
@@ -140,6 +148,7 @@ function RepositoryList(): React.ReactElement {
         searchText={search}
         setSearchText={setSearch}
         onPress={(repositoryId) => navigate(`/repository/${repositoryId}`)}
+        onEndReach={onEndReach}
     />;
 }
 

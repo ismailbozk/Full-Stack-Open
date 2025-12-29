@@ -38,8 +38,10 @@ export interface ReviewEdge {
 
 export interface ReviewPageInfo {
     hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string;
+    endCursor: string;
 }
-
 export interface ReviewsWrapper {
     edges: ReviewEdge[];
     pageInfo: ReviewPageInfo;

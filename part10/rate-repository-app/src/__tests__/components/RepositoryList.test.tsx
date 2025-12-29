@@ -52,7 +52,15 @@ describe('RepositoryList', () => {
 
             // Transform to Repository array
             const repositoryArray: Repository[] = repositoriesData.repositories.edges.map(edge => edge.node);
-            render(<RepositoryListContainer repositories={repositoryArray} onPress={() => {} } searchText="" setSearchText={() => {}} selectedOrder={RepositoryListOrderOptions.LASTEST} setSelectedOrder={() => {}} />);
+            render(<RepositoryListContainer 
+                repositories={repositoryArray} 
+                onPress={() => {}} 
+                searchText="" 
+                setSearchText={() => {}} 
+                selectedOrder={RepositoryListOrderOptions.LASTEST} 
+                setSelectedOrder={() => {}} 
+                onEndReach={() => {}} />
+            );
             const items = screen.getAllByTestId('RepositoryItem');
 
             expect(items).toHaveLength(2);
